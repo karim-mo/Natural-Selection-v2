@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -72,16 +73,18 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("Grounded", grounded);
         //Debug.Log(_z);
 
-        if (_rb.velocity.y > 0 + 1.5f)
+        if (_rb.velocity.y > (0 + 1.5f))
         {
             anim.SetInteger("state", 2);
         }
-        else if (_rb.velocity.y < 0 - 1.5f && !grounded)
+        else if (_rb.velocity.y < (0 - 1.5f) && !grounded)
         {
             anim.SetInteger("state", 1);
         }
         else anim.SetInteger("state", 0);
 
+        //Debug.Log(_rb.velocity.y);
+        //if (Input.GetButtonDown("Jump")) EditorApplication.isPaused = true;
 
     }
 
