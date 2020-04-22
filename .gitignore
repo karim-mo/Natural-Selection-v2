@@ -58,3 +58,8 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+#Blender
+*.pyc
+*.blend[1-9]
+__pycache__
+/dist/
