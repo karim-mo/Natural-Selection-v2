@@ -1,0 +1,63 @@
+[attr]lfs filter=lfs diff=lfs merge=lfs -text
+
+# Image files
+*.bmp lfs
+*.exr lfs
+*.gif lfs
+*.hdr lfs
+*.iff lfs
+*.jpg lfs
+*.jpeg lfs
+*.pict lfs
+*.png lfs
+*.psd lfs
+*.tga lfs
+*.tif lfs
+*.tiff lfs
+
+# Audio files
+*.mp3 lfs
+*.ogg lfs
+*.wav lfs
+*.aif lfs
+*.aiff lfs
+*.mod lfs
+*.it lfs
+*.s3m lfs
+*.xm lfs
+
+# Video files
+*.mov lfs
+*.mpg lfs
+*.mpeg lfs
+*.mp4 lfs
+*.avi lfs
+*.asf lfs
+
+# 3D model files
+*.fbx lfs
+*.dae lfs
+*.3ds lfs
+*.dxf lfs
+*.obj lfs
+*.skp lfs
+
+# Proprietary 3D model files
+# TODO add more
+*.blend lfs
+*.c4d lfs
+
+# Font files
+*.ttf lfs
+*.otf lfs
+
+# Scene, prefab and ScriptableObject files
+*.unity merge=unityyamlmerge
+*.prefab merge=unityyamlmerge
+*.asset merge=unityyamlmerge
+*.mat merge=unityyamlmerge
+*.anim merge=unityyamlmerge
+*.physicsMaterial merge=unityyamlmerge
+*.physicsMaterial2D merge=unityyamlmerge
+*.controller merge=unityyamlmerge
+*.meta merge=unityyamlmerge
