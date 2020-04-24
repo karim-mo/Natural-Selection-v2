@@ -1,17 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public Vector3 offset;
+
     public float peakSpeed;
     public float mainSpeed;
     public float jumpForce;
 
     public float gravity;
 
-    public CameraController cam;
+    public CameraController camBase;
     public LayerMask jumpableLayers;
     [HideInInspector]
     public bool jump;
@@ -22,15 +25,17 @@ public class PlayerController : MonoBehaviour
     private CapsuleCollider col;
     private RaycastHit _ground;
     private Vector3 _groundLoc;
+    private Camera cam;
     private bool LShift = false;
     private float _x;
     private float _z;
-
+    Vector3 targetPos;
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
+        camBase = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
+        cam = camBase.gameObject.transform.GetChild(0).gameObject.GetComponent<Camera>();
         col = GetComponent<CapsuleCollider>();
     }
 
@@ -50,8 +55,29 @@ public class PlayerController : MonoBehaviour
 
         //transform.rotation = cam.gameObject.transform.rotation;
         Quaternion rot = Quaternion.identity;
-        rot.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, cam.gameObject.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+        rot.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, camBase.gameObject.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
         transform.rotation = rot;
+
+        #region Shooting testing
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Debug.DrawRay(ray.origin, ray.direction * 40f, Color.red);
+        RaycastHit hit;
+        
+        if(Physics.Raycast(ray, out hit, 40f))
+        {
+            //Debug.Log(hit.point + " " + hit.collider.gameObject.name);
+            targetPos = hit.point;
+        }
+        else
+        {
+            //Debug.Log(ray.GetPoint(20f));
+            targetPos = ray.GetPoint(20f);
+            
+        }
+
+        
+        #endregion
+
         _currSpeed = LShift ? mainSpeed : mainSpeed;
 
 
@@ -119,6 +145,44 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded()
     {
         return Physics.CheckCapsule(col.bounds.center, new Vector3(col.bounds.center.x, col.bounds.min.y, col.bounds.center.z), col.radius * .4f, jumpableLayers);
+    }
+    private void LateUpdate()
+    {
+        //Transform rightElbow = anim.GetBoneTransform(HumanBodyBones.RightLowerArm);
+
+        //rightElbow.LookAt(targetPos);
+        //rightElbow.rotation = rightElbow.rotation * Quaternion.Euler(offset);
+        //rightElbow.Rotate(90, 0, 0, Space.Self);
+
+
+
+        //Transform rightHand = anim.GetBoneTransform(HumanBodyBones.RightHand);
+        //rightHand.Rotate(0, -45, 0, Space.Self);
+
+        //Transform leftElbow = anim.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+
+        //leftElbow.LookAt(rightHand);
+        //leftElbow.rotation = leftElbow.rotation * Quaternion.Euler(offset);
+        //leftElbow.Rotate(90, 0, 0, Space.Self);
+
+        //Transform leftHand = anim.GetBoneTransform(HumanBodyBones.LeftHand);
+        //leftHand.Rotate(0, 90, 0, Space.Self);
+
+        Transform chest = anim.GetBoneTransform(HumanBodyBones.Chest);
+        //chest.LookAt(new Vector3(targetPos.x - offset.x, targetPos.y, targetPos.z));
+        chest.LookAt(targetPos);
+        chest.Rotate(10, 45, 0, Space.Self);
+    }
+    void OnAnimatorIK(int layerIndex)
+    {
+
+        //anim.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
+        //anim.SetIKHintPositionWeight(AvatarIKHint.RightElbow, 0.5f);
+        //anim.SetIKPosition(AvatarIKGoal.RightHand, elbow.transform.position); // Crosshair target position in world coords
+        //anim.SetIKHintPosition(AvatarIKHint.RightElbow, elbow.transform.position); // Elbow bone
+
+        //anim.SetLookAtWeight(1);
+        //anim.SetLookAtPosition(targetPos);
     }
 
 
