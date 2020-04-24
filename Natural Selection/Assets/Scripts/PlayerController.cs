@@ -6,46 +6,71 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public Vector3 offset;
+    public static class States
+    {
+        public const int WEAPON_UP = 0;
+        public const int WEAPON_DOWN = 1;
+    }
 
+    #region Publics
+    [Header("Physics stats")]
     public float peakSpeed;
     public float mainSpeed;
     public float jumpForce;
-
     public float gravity;
 
+    [Header("Components&References")]
     public CameraController camBase;
+
+    [Header("Adjustables")]
     public LayerMask jumpableLayers;
+
+    [Header("Not So Public")]
     [HideInInspector]
     public bool jump;
+    [HideInInspector]
+    public int currState = -1;
+    #endregion
 
+
+    #region Privates
+    [Header("Privates")]
     private float _currSpeed;
+    private float _x;
+    private float _z;
+    private bool _grounded;
+    private bool canMove;
+    private bool rifleUp;
+    private bool canShoot;
+    private bool isReloading;
+    private bool isGrabbingWep;
+    private bool isHolsteringWep;
+
     private Rigidbody _rb;
     private Animator anim;
     private CapsuleCollider col;
+    private Camera cam;
+
+
     private RaycastHit _ground;
     private Vector3 _groundLoc;
-    private Camera cam;
-    private bool LShift = false;
-    private float _x;
-    private float _z;
-    Vector3 targetPos;
+    private Vector3 targetPos;
+    #endregion
+
     void Start()
     {
-        _rb = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
-        camBase = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
-        cam = camBase.gameObject.transform.GetChild(0).gameObject.GetComponent<Camera>();
-        col = GetComponent<CapsuleCollider>();
+        varsInit();
+        refInit();
     }
 
+    #region Updates
     void Update()
     {
-        //Debug.Log(Input.GetKey(KeyCode.W));
+        statesHanlder();
 
-        
         _x = Mathf.Clamp(Input.GetAxis("Horizontal") * 2, -1, 1);
         _z = Mathf.Clamp(Input.GetAxis("Vertical") * 2, -1, 1);
+
         anim.SetFloat("VelX", _x);
         anim.SetFloat("VelZ", _z);
 
@@ -53,17 +78,81 @@ public class PlayerController : MonoBehaviour
         _z = Input.GetAxisRaw("Vertical");
 
 
-        //transform.rotation = cam.gameObject.transform.rotation;
-        Quaternion rot = Quaternion.identity;
-        rot.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, camBase.gameObject.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-        transform.rotation = rot;
 
-        #region Shooting testing
+        shootingHandling();
+        handleRotation();
+        
+
+        _currSpeed = mainSpeed; // Debugging for now
+
+        jump = Input.GetButtonDown("Jump");
+        if (jump) Jump(Vector3.up);
+
+        velAndAnimations();
+    }
+
+    
+    void FixedUpdate()
+    {
+        float finalSpeedX = _currSpeed * _x;
+        float finalSpeedZ = _currSpeed * _z;
+
+        if(Mathf.Abs(_x) > 0 && Mathf.Abs(_z) > 0)
+        {
+            finalSpeedX *= 0.5f;
+            finalSpeedZ *= 0.5f;
+        }
+
+        Move(new Vector2(finalSpeedX, finalSpeedZ));
+        
+
+
+
+        // Gravity
+        Vector3 grav = -gravity * Vector3.up;
+        _rb.AddForce(grav * Time.fixedDeltaTime, ForceMode.Acceleration);
+    }
+
+    private void LateUpdate()
+    {
+        if (currState != States.WEAPON_UP) return;
+
+        Transform chest = anim.GetBoneTransform(HumanBodyBones.Chest);
+        chest.LookAt(targetPos);
+        chest.Rotate(10, 45, 0, Space.Self);
+    }
+    #endregion
+
+    public bool isGrounded()
+    {
+        return Physics.CheckCapsule(col.bounds.center, new Vector3(col.bounds.center.x, col.bounds.min.y, col.bounds.center.z), col.radius * .4f, jumpableLayers);
+    }
+
+    public void Move(Vector2 dir)
+    {
+        if (!canMove) return;
+
+        _rb.velocity = transform.TransformDirection(dir.x, _rb.velocity.y, dir.y);
+    }
+
+    public void Jump(Vector3 dir)
+    {
+        if (!_grounded) return;
+        if (!canMove) return;
+        
+        _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
+        _rb.velocity += dir * jumpForce;
+    }
+
+    public void shootingHandling()
+    {
+        if (!canMove) return;
+
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         Debug.DrawRay(ray.origin, ray.direction * 40f, Color.red);
         RaycastHit hit;
-        
-        if(Physics.Raycast(ray, out hit, 40f))
+
+        if (Physics.Raycast(ray, out hit, 40f))
         {
             //Debug.Log(hit.point + " " + hit.collider.gameObject.name);
             targetPos = hit.point;
@@ -72,118 +161,115 @@ public class PlayerController : MonoBehaviour
         {
             //Debug.Log(ray.GetPoint(20f));
             targetPos = ray.GetPoint(20f);
-            
+
         }
+    }
 
-        
-        #endregion
-
-        _currSpeed = LShift ? mainSpeed : mainSpeed;
-
-
-
-        jump = Input.GetButtonDown("Jump");
-        //Debug.Log(jump);
-        
-        bool grounded = isGrounded();
-
-        //if (_x == 0 && _z == 0 && grounded) _rb.velocity = Vector3.zero;
-
-        if (isGrounded() && jump)
-        {
-            _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
-            _rb.velocity += Vector3.up * jumpForce;
-        }
-
-
-        anim.SetBool("Grounded", grounded);
-        //Debug.Log(_z);
+    public void velAndAnimations()
+    {
+        anim.SetBool("Grounded", _grounded);
+        anim.SetBool("Rifle", rifleUp);
 
         if (_rb.velocity.y > (0 + 1.5f))
         {
             anim.SetInteger("state", 2);
         }
-        else if (_rb.velocity.y < (0 - 1.5f) && !grounded)
+        else if (_rb.velocity.y < (0 - 1.5f) && !_grounded)
         {
             anim.SetInteger("state", 1);
         }
         else anim.SetInteger("state", 0);
-
-        //Debug.Log(_rb.velocity.y);
-        //if (Input.GetButtonDown("Jump")) EditorApplication.isPaused = true;
-
     }
 
-    void FixedUpdate()
+    public void varsInit()
     {
-        Vector3 mov = transform.position;
-        //_rb.MovePosition(transform.position + Time.deltaTime * _currSpeed * transform.TransformDirection(_x, 0, _z));
-        //float velY = _rb.velocity.y;
-        float finalSpeedX = _currSpeed * _x;
-        float finalSpeedZ = _currSpeed * _z;
+        currState = -1;
+        _grounded = false;
+        canMove = true;
+        rifleUp = false;
+        canShoot = false;
+        isReloading = false;
+        isGrabbingWep = false;
+        isHolsteringWep = false;
+    }
 
-        if(Mathf.Abs(_x ) > 0 && Mathf.Abs(_z) > 0)
+    public void refInit()
+    {
+        _rb = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
+        camBase = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
+        cam = camBase.gameObject.transform.GetChild(0).gameObject.GetComponent<Camera>();
+        col = GetComponent<CapsuleCollider>();
+    }
+
+    public void handleRotation()
+    {
+        Quaternion rot = Quaternion.identity;
+        rot.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, camBase.gameObject.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+        transform.rotation = rot;
+    }
+
+    public void statesHanlder()
+    {
+        currState = rifleUp ? States.WEAPON_UP : States.WEAPON_DOWN;
+        _grounded = isGrounded();
+
+        if (Input.GetKeyDown(KeyCode.Q) && _grounded && !isReloading && !isGrabbingWep && !isHolsteringWep)
         {
-            finalSpeedX *= 0.5f;
-            finalSpeedZ *= 0.5f;
+            if (rifleUp) StartCoroutine("HolsterWeapon");
+            else StartCoroutine("GrabWeapon");
         }
 
-        _rb.velocity = transform.TransformDirection(finalSpeedX, _rb.velocity.y, finalSpeedZ);
-
-        //_rb.velocity = new Vector3(_rb.velocity.x, velY, _rb.velocity.z);
-        //new Vector3(_currSpeed * _x, 0, _currSpeed * _z);
-
-        Vector3 grav = -gravity * Vector3.up;
-        _rb.AddForce(grav * Time.fixedDeltaTime, ForceMode.Acceleration);
-
-        
-
-
-        //transform.position = mov;
+        if (Input.GetKeyDown(KeyCode.R) && rifleUp && !isReloading && !isGrabbingWep && !isHolsteringWep)
+        {
+            StartCoroutine("Reload");
+        }
     }
 
-    public bool isGrounded()
+    IEnumerator HolsterWeapon()
     {
-        return Physics.CheckCapsule(col.bounds.center, new Vector3(col.bounds.center.x, col.bounds.min.y, col.bounds.center.z), col.radius * .4f, jumpableLayers);
+        canShoot = false;
+        isHolsteringWep = true;
+        anim.SetTrigger("Holster");
+        anim.SetInteger("aimState", 0);
+        while (HolsterBehaviour.isRifleUp)
+        {
+            yield return null;
+        }
+        rifleUp = false;
+        HolsterBehaviour.isRifleUp = true;
+        anim.SetLayerWeight(1, 0);
+        isHolsteringWep = false;
     }
-    private void LateUpdate()
+
+    IEnumerator GrabWeapon()
     {
-        //Transform rightElbow = anim.GetBoneTransform(HumanBodyBones.RightLowerArm);
-
-        //rightElbow.LookAt(targetPos);
-        //rightElbow.rotation = rightElbow.rotation * Quaternion.Euler(offset);
-        //rightElbow.Rotate(90, 0, 0, Space.Self);
-
-
-
-        //Transform rightHand = anim.GetBoneTransform(HumanBodyBones.RightHand);
-        //rightHand.Rotate(0, -45, 0, Space.Self);
-
-        //Transform leftElbow = anim.GetBoneTransform(HumanBodyBones.LeftLowerArm);
-
-        //leftElbow.LookAt(rightHand);
-        //leftElbow.rotation = leftElbow.rotation * Quaternion.Euler(offset);
-        //leftElbow.Rotate(90, 0, 0, Space.Self);
-
-        //Transform leftHand = anim.GetBoneTransform(HumanBodyBones.LeftHand);
-        //leftHand.Rotate(0, 90, 0, Space.Self);
-
-        Transform chest = anim.GetBoneTransform(HumanBodyBones.Chest);
-        //chest.LookAt(new Vector3(targetPos.x - offset.x, targetPos.y, targetPos.z));
-        chest.LookAt(targetPos);
-        chest.Rotate(10, 45, 0, Space.Self);
+        isGrabbingWep = true;
+        anim.SetLayerWeight(1, 1);
+        anim.SetTrigger("GrabWeapon");
+        while (!GrabWeaponBehaviour.isRifleUp)
+        {
+            yield return null;
+        }
+        rifleUp = true;
+        GrabWeaponBehaviour.isRifleUp = false;
+        anim.SetInteger("aimState", 1);
+        canShoot = true;
+        isGrabbingWep = false;
     }
-    void OnAnimatorIK(int layerIndex)
+
+    IEnumerator Reload()
     {
-
-        //anim.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
-        //anim.SetIKHintPositionWeight(AvatarIKHint.RightElbow, 0.5f);
-        //anim.SetIKPosition(AvatarIKGoal.RightHand, elbow.transform.position); // Crosshair target position in world coords
-        //anim.SetIKHintPosition(AvatarIKHint.RightElbow, elbow.transform.position); // Elbow bone
-
-        //anim.SetLookAtWeight(1);
-        //anim.SetLookAtPosition(targetPos);
+        isReloading = true;
+        canShoot = false;
+        anim.SetTrigger("Reload");
+        //anim.SetInteger("aimState", 0);
+        while (!Reloading.Reloaded)
+        {
+            yield return null;
+        }
+        canShoot = true;
+        Reloading.Reloaded = false;
+        isReloading = false;
     }
-
-
 }
