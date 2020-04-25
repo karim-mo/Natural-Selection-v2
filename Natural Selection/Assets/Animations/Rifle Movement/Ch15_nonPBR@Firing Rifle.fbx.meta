@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 4d368eb48814fed4487cb0641d4f304b
+guid: 58f984784223bd54fb6152048552c27a
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Grab And Put Back Rifle
+    second: Firing Rifle
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -35,18 +35,18 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Grab And Put Back Rifle
+      name: Firing Rifle
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 53
+      lastFrame: 35
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1

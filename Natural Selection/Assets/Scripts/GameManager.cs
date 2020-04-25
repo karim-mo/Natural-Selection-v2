@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private bool cursorOn = false;
+
     void Start()
     {
         Cursor.visible = false;

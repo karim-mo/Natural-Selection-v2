@@ -18,7 +18,7 @@ public class CameraController : MonoBehaviour
 
 
 
-	// Use this for initialization
+
 	void Start()
 	{
 		Vector3 rot = transform.localRotation.eulerAngles;
@@ -26,11 +26,8 @@ public class CameraController : MonoBehaviour
 		Pitch = rot.x;
 	}
 
-	// Update is called once per frame
 	void Update()
 	{
-
-		// We setup the rotation of the sticks here
 		mouseX = Input.GetAxis("Mouse X");
 		mouseY = Input.GetAxis("Mouse Y");
 
@@ -41,8 +38,6 @@ public class CameraController : MonoBehaviour
 
 		Quaternion localRotation = Quaternion.Euler(Pitch, Yaw, 0.0f);
 		transform.rotation = localRotation;
-
-
 	}
 
 	void LateUpdate()
@@ -52,10 +47,9 @@ public class CameraController : MonoBehaviour
 
 	void CameraUpdater()
 	{
-		// set the target object to follow
 		Transform target = CameraFollowObj.transform;
 
-		//move towards the game object that is the target
+
 		float speed = CameraMoveSpeed * Time.deltaTime;
 		transform.position = Vector3.MoveTowards(transform.position, target.position, speed);
 	}

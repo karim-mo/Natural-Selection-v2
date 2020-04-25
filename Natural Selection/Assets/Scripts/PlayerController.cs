@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
 
@@ -38,6 +39,8 @@ public class PlayerController : MonoBehaviour
     private float _currSpeed;
     private float _x;
     private float _z;
+    private float mainCamFOV;
+    private float aimFOV;
     private bool _grounded;
     private bool canMove;
     private bool rifleUp;
@@ -50,7 +53,7 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
     private CapsuleCollider col;
     private Camera cam;
-
+    private ShootingHandling weapon;
 
     private RaycastHit _ground;
     private Vector3 _groundLoc;
@@ -161,8 +164,9 @@ public class PlayerController : MonoBehaviour
         {
             //Debug.Log(ray.GetPoint(20f));
             targetPos = ray.GetPoint(20f);
-
         }
+
+
     }
 
     public void velAndAnimations()
@@ -184,6 +188,8 @@ public class PlayerController : MonoBehaviour
     public void varsInit()
     {
         currState = -1;
+        aimFOV = 40;
+        mainCamFOV = 60;
         _grounded = false;
         canMove = true;
         rifleUp = false;
@@ -200,6 +206,7 @@ public class PlayerController : MonoBehaviour
         camBase = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
         cam = camBase.gameObject.transform.GetChild(0).gameObject.GetComponent<Camera>();
         col = GetComponent<CapsuleCollider>();
+        weapon = GetComponent<ShootingHandling>();
     }
 
     public void handleRotation()
@@ -214,15 +221,63 @@ public class PlayerController : MonoBehaviour
         currState = rifleUp ? States.WEAPON_UP : States.WEAPON_DOWN;
         _grounded = isGrounded();
 
-        if (Input.GetKeyDown(KeyCode.Q) && _grounded && !isReloading && !isGrabbingWep && !isHolsteringWep)
+        if (Input.GetKeyDown(KeyCode.Q) && _grounded && !isReloading && !isGrabbingWep && !isHolsteringWep && currState == States.WEAPON_UP)
         {
-            if (rifleUp) StartCoroutine("HolsterWeapon");
-            else StartCoroutine("GrabWeapon");
+            //weapon.currWeapon = null;
+            StartCoroutine("HolsterWeapon");
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && rifleUp && !isReloading && !isGrabbingWep && !isHolsteringWep)
+        if (Input.GetKeyDown(KeyCode.R) && currState == States.WEAPON_UP && !isReloading && !isGrabbingWep && !isHolsteringWep)
         {
             StartCoroutine("Reload");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1) && currState == States.WEAPON_UP && !isReloading && !isHolsteringWep && !isGrabbingWep)
+        {
+            weapon.prevWeapon = weapon.currWeapon;
+            weapon.currWeapon = weapon.currWeapons[0];
+            if (weapon.prevWeapon == weapon.currWeapon)
+            {
+                weapon.prevWeapon = weapon.currWeapons[1];
+                return;
+            }
+            StartCoroutine("GrabWeapon");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1) && currState == States.WEAPON_DOWN)
+        {
+            weapon.currWeapon = weapon.currWeapons[0];
+            StartCoroutine("GrabWeapon");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2) && currState == States.WEAPON_UP && !isReloading && !isHolsteringWep && !isGrabbingWep)
+        {
+            weapon.prevWeapon = weapon.currWeapon;
+            weapon.currWeapon = weapon.currWeapons[1];
+            if(weapon.prevWeapon == weapon.currWeapon)
+            {
+                weapon.prevWeapon = weapon.currWeapons[0];
+                return;
+            }
+            if (weapon.currWeapon.go == null) weapon.currWeapon.go = Instantiate(weapon.currWeapon.prefab);
+            StartCoroutine("GrabWeapon");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2) && currState == States.WEAPON_DOWN)
+        {
+            weapon.currWeapon = weapon.currWeapons[1];
+            if(weapon.currWeapon.go == null) weapon.currWeapon.go = Instantiate(weapon.currWeapon.prefab);
+            //weapon.currWeapon.go.SetActive(true);
+            StartCoroutine("GrabWeapon");
+        }
+
+        if (Input.GetMouseButton(1) && currState == States.WEAPON_UP && !isReloading && !isHolsteringWep && !isGrabbingWep)
+        {
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, aimFOV, Time.deltaTime * 15);
+        }
+        else
+        {
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, mainCamFOV, Time.deltaTime * 10);
         }
     }
 
@@ -236,6 +291,11 @@ public class PlayerController : MonoBehaviour
         {
             yield return null;
         }
+        weapon.currWeapon = weapon.currWeapons[1];
+        Destroy(weapon.currWeapon.go);
+        weapon.currWeapon = weapon.currWeapons[0];
+        weapon.Detach(weapon.currWeapon.go, weapon.currWeapon);
+        weapon.currWeapon = null;
         rifleUp = false;
         HolsterBehaviour.isRifleUp = true;
         anim.SetLayerWeight(1, 0);
@@ -246,6 +306,15 @@ public class PlayerController : MonoBehaviour
     {
         isGrabbingWep = true;
         anim.SetLayerWeight(1, 1);
+        if(currState == States.WEAPON_DOWN)
+        {
+            weapon.Attach(weapon.currWeapon.go, weapon.currWeapon);
+        }
+        else
+        {
+            weapon.Detach(weapon.prevWeapon.go, weapon.prevWeapon);
+            weapon.Attach(weapon.currWeapon.go, weapon.currWeapon);
+        }
         anim.SetTrigger("GrabWeapon");
         while (!GrabWeaponBehaviour.isRifleUp)
         {
@@ -263,7 +332,6 @@ public class PlayerController : MonoBehaviour
         isReloading = true;
         canShoot = false;
         anim.SetTrigger("Reload");
-        //anim.SetInteger("aimState", 0);
         while (!Reloading.Reloaded)
         {
             yield return null;
