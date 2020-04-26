@@ -31,13 +31,15 @@ public class CameraController : MonoBehaviour
 		mouseX = Input.GetAxis("Mouse X");
 		mouseY = Input.GetAxis("Mouse Y");
 
-		Yaw += mouseX * inputSensitivity * Time.deltaTime;
-		Pitch -= mouseY * inputSensitivity * Time.deltaTime;
+		Yaw += mouseX * inputSensitivity * Time.fixedDeltaTime;
+		Pitch -= mouseY * inputSensitivity * Time.fixedDeltaTime;
 
 		Pitch = Mathf.Clamp(Pitch, -clampAngle, clampAngle);
 
 		Quaternion localRotation = Quaternion.Euler(Pitch, Yaw, 0.0f);
 		transform.rotation = localRotation;
+
+		
 	}
 
 	void LateUpdate()

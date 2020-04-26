@@ -626,12 +626,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &314936639 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1598948596578815795, guid: ca3408df76eb4a049943f1f8b4d35fb0,
-    type: 3}
-  m_PrefabInstance: {fileID: 1908172730}
-  m_PrefabAsset: {fileID: 0}
 --- !u!222 &374496522
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1462,12 +1456,6 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!4 &630816000 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3743738756623210242, guid: ca3408df76eb4a049943f1f8b4d35fb0,
-    type: 3}
-  m_PrefabInstance: {fileID: 1908172730}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &674271577
 GameObject:
   m_ObjectHideFlags: 0
@@ -1573,7 +1561,7 @@ GameObject:
   - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1660,61 +1648,6 @@ MonoBehaviour:
   smooth: 10
   dollyDirAdjusted: {x: 0, y: 0, z: 0}
   distance: 0
---- !u!1 &1020838986 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1412621752167277170, guid: ca3408df76eb4a049943f1f8b4d35fb0,
-    type: 3}
-  m_PrefabInstance: {fileID: 1908172730}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1020838992
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1020838986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 232674d29c5e8164bac8e9531ba71060, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rightHand: {fileID: 630816000}
-  Spine: {fileID: 314936639}
-  currWeapons: []
-  currWeapon:
-    prefab: {fileID: 0}
-    go: {fileID: 0}
-    handPos: {x: 0, y: 0, z: 0}
-    handRot: {x: 0, y: 0, z: 0}
-    spinePos: {x: 0, y: 0, z: 0}
-    spineRot: {x: 0, y: 0, z: 0}
-    name: 
-    type: 
-    bullets: 0
-    reserve: 0
-    currBullets: 0
-    currReserve: 0
-    damage: 0
-    fireAmount: 0
-    fireRate: 0
-    animSpeed: 0
-  prevWeapon:
-    prefab: {fileID: 0}
-    go: {fileID: 0}
-    handPos: {x: 0, y: 0, z: 0}
-    handRot: {x: 0, y: 0, z: 0}
-    spinePos: {x: 0, y: 0, z: 0}
-    spineRot: {x: 0, y: 0, z: 0}
-    name: 
-    type: 
-    bullets: 0
-    reserve: 0
-    currBullets: 0
-    currReserve: 0
-    damage: 0
-    fireAmount: 0
-    fireRate: 0
-    animSpeed: 0
 --- !u!1 &1422210473
 GameObject:
   m_ObjectHideFlags: 0
@@ -10027,43 +9960,12 @@ PrefabInstance:
     - target: {fileID: 5425704944657890587, guid: ca3408df76eb4a049943f1f8b4d35fb0,
         type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed by
-        Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
-        'mixamorig:LeftHandThumb2'\n\tTransform 'mixamorig:LeftHandIndex1'\n\tTransform
-        'mixamorig:LeftHandPinky2'\n\tTransform 'mixamorig:RightHandRing2'\n\tTransform
-        'mixamorig:Spine1'\n\tTransform 'mixamorig:LeftToeBase'\n\tTransform 'mixamorig:LeftHandThumb3'\n\tTransform
-        'mixamorig:RightArm'\n\tand more ...\n\tFrom animation clip 'Idle'\n\tFrom
-        animation clip 'Fast Run'\n\tFrom animation clip 'Running Backward'\n\tFrom
-        animation clip 'Jog Strafe Left'\n\tFrom animation clip 'Jog Strafe Right'\n\tFrom
-        animation clip 'Jog Backward Left'\n\tFrom animation clip 'Jog Backward Right'\n\tFrom
-        animation clip 'Jog Forward Left'\n\tFrom animation clip 'Jog Forward Right'\n\tFrom
-        animation clip 'Falling Idle'\n\tand more ..."
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6970251614849510018, guid: ca3408df76eb4a049943f1f8b4d35fb0,
         type: 3}
       propertyPath: elbow
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6970251614849510019, guid: ca3408df76eb4a049943f1f8b4d35fb0,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6970251614849510019, guid: ca3408df76eb4a049943f1f8b4d35fb0,
-        type: 3}
-      propertyPath: m_Center.x
-      value: -0.020363566
-      objectReference: {fileID: 0}
-    - target: {fileID: 6970251614849510019, guid: ca3408df76eb4a049943f1f8b4d35fb0,
-        type: 3}
-      propertyPath: m_Center.y
-      value: 0.44095704
-      objectReference: {fileID: 0}
-    - target: {fileID: 6970251614849510019, guid: ca3408df76eb4a049943f1f8b4d35fb0,
-        type: 3}
-      propertyPath: m_Height
-      value: 0.9044651
       objectReference: {fileID: 0}
     - target: {fileID: 6970251614849510020, guid: ca3408df76eb4a049943f1f8b4d35fb0,
         type: 3}

@@ -13,7 +13,7 @@ public class CamCollision : MonoBehaviour
 	public float distance;
 
 
-	void Awake()
+	void Start()
 	{
 		dollyDir = transform.localPosition.normalized;
 		distance = transform.localPosition.magnitude;

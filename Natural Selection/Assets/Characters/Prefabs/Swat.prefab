@@ -376,6 +376,7 @@ GameObject:
   - component: {fileID: 6970251614849510020}
   - component: {fileID: 6970251614849510019}
   - component: {fileID: 6970251614849510018}
+  - component: {fileID: 8342603435720285456}
   m_Layer: 0
   m_Name: Swat
   m_TagString: Untagged
@@ -446,9 +447,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.24432413
-  m_Height: 1.8009686
+  m_Height: 0.9044651
   m_Direction: 1
-  m_Center: {x: -0.02036357, y: 0.8892089, z: 0}
+  m_Center: {x: -0.020363566, y: 0.44095704, z: 0}
 --- !u!114 &6970251614849510018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -465,11 +466,61 @@ MonoBehaviour:
   mainSpeed: 4.5
   jumpForce: 10.5
   gravity: 1400
-  cam: {fileID: 0}
+  camBase: {fileID: 0}
   jumpableLayers:
     serializedVersion: 2
     m_Bits: 256
   jump: 0
+  currState: -1
+--- !u!114 &8342603435720285456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1412621752167277170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 232674d29c5e8164bac8e9531ba71060, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rightHand: {fileID: 3743738756623210242}
+  Spine: {fileID: 1598948596578815795}
+  currWeapons: []
+  currWeapon:
+    prefab: {fileID: 0}
+    go: {fileID: 0}
+    handPos: {x: 0, y: 0, z: 0}
+    handRot: {x: 0, y: 0, z: 0}
+    spinePos: {x: 0, y: 0, z: 0}
+    spineRot: {x: 0, y: 0, z: 0}
+    name: 
+    type: 
+    bullets: 0
+    reserve: 0
+    currBullets: 0
+    currReserve: 0
+    damage: 0
+    fireAmount: 0
+    fireRate: 0
+    animSpeed: 0
+  prevWeapon:
+    prefab: {fileID: 0}
+    go: {fileID: 0}
+    handPos: {x: 0, y: 0, z: 0}
+    handRot: {x: 0, y: 0, z: 0}
+    spinePos: {x: 0, y: 0, z: 0}
+    spineRot: {x: 0, y: 0, z: 0}
+    name: 
+    type: 
+    bullets: 0
+    reserve: 0
+    currBullets: 0
+    currReserve: 0
+    damage: 0
+    fireAmount: 0
+    fireRate: 0
+    animSpeed: 0
 --- !u!1 &1414998038227883543
 GameObject:
   m_ObjectHideFlags: 0
