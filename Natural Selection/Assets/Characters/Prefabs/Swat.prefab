@@ -466,6 +466,7 @@ MonoBehaviour:
   mainSpeed: 4.5
   jumpForce: 10.5
   gravity: 1400
+  jumpDrag: 100
   camBase: {fileID: 0}
   jumpableLayers:
     serializedVersion: 2

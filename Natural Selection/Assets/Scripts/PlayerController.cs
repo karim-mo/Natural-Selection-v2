@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     public float mainSpeed;
     public float jumpForce;
     public float gravity;
+    public float jumpDrag;
 
     [Header("Components&References")]
     public CameraController camBase;
@@ -102,8 +103,8 @@ public class PlayerController : MonoBehaviour
 
         if(Mathf.Abs(_x) > 0 && Mathf.Abs(_z) > 0)
         {
-            finalSpeedX *= 0.5f;
-            finalSpeedZ *= 0.5f;
+            finalSpeedX /= 1.414f;
+            finalSpeedZ /= 1.414f;
         }
 
         Move(new Vector2(finalSpeedX, finalSpeedZ));
@@ -135,7 +136,20 @@ public class PlayerController : MonoBehaviour
     {
         if (!canMove) return;
 
-        _rb.velocity = transform.TransformDirection(dir.x, _rb.velocity.y, dir.y);
+        if (_grounded)
+            _rb.velocity = transform.TransformDirection(dir.x, _rb.velocity.y, dir.y);
+        else
+        {
+            Vector3 F = transform.TransformDirection(dir.x * jumpDrag, 0, dir.y * jumpDrag) * Time.fixedDeltaTime;
+            Vector3 V = (F / _rb.mass) * Time.fixedDeltaTime + _rb.velocity;
+
+            if (velocityCalc(V) < mainSpeed)
+            {
+                _rb.AddForce(transform.TransformDirection(dir.x * jumpDrag, 0, dir.y * jumpDrag) * Time.fixedDeltaTime);
+            }
+
+            _rb.AddForce(new Vector3(-_rb.velocity.x * jumpDrag, 0, -_rb.velocity.z * jumpDrag) * Time.fixedDeltaTime);
+        } 
     }
 
     public void Jump(Vector3 dir)
@@ -167,6 +181,11 @@ public class PlayerController : MonoBehaviour
         }
 
 
+    }
+
+    public float velocityCalc(Vector3 velocity)
+    {
+        return Mathf.Sqrt((velocity.x * velocity.x) + (velocity.z * velocity.z)); 
     }
 
     public void velAndAnimations()
@@ -223,7 +242,6 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q) && _grounded && !isReloading && !isGrabbingWep && !isHolsteringWep && currState == States.WEAPON_UP)
         {
-            //weapon.currWeapon = null;
             StartCoroutine("HolsterWeapon");
         }
 
@@ -267,7 +285,6 @@ public class PlayerController : MonoBehaviour
         {
             weapon.currWeapon = weapon.currWeapons[1];
             if(weapon.currWeapon.go == null) weapon.currWeapon.go = Instantiate(weapon.currWeapon.prefab);
-            //weapon.currWeapon.go.SetActive(true);
             StartCoroutine("GrabWeapon");
         }
 
