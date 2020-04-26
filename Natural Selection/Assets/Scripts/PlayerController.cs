@@ -312,6 +312,13 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            anim.SetTrigger("Holster");
+            anim.SetInteger("aimState", 0);
+            while (HolsterBehaviour.isRifleUp)
+            {
+                yield return null;
+            }
+            HolsterBehaviour.isRifleUp = true;
             weapon.Detach(weapon.prevWeapon.go, weapon.prevWeapon);
             weapon.Attach(weapon.currWeapon.go, weapon.currWeapon);
         }
