@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using UnityEditor;
+using UnityEditor.Timeline;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -14,12 +15,20 @@ public class PlayerController : MonoBehaviour
     }
 
     #region Publics
-    [Header("Physics stats")]
+    [Header("Speed settings")]
     public float peakSpeed;
     public float mainSpeed;
-    public float jumpForce;
     public float gravity;
+
+    [Header("Jump settings")]
+    public float jumpForce;
     public float jumpDrag;
+
+    [Header("Dash settings")]
+    public float groundDashForce;
+    public float groundDashDuration;
+    public float jumpDashForce;
+    public float jumpDashDuration;
 
     [Header("Components&References")]
     public CameraController camBase;
@@ -54,7 +63,9 @@ public class PlayerController : MonoBehaviour
     private bool isHolsteringWep;
     private bool isCrouching;
     private bool m_xDecreased;
-    private bool isDashing;
+    private bool isGroundDashing;
+    private bool isJumpDashing;
+    private bool grabbingWall;
 
     private Rigidbody _rb;
     private Animator anim;
@@ -133,15 +144,25 @@ public class PlayerController : MonoBehaviour
         //    _rb.position = Mathf.Lerp(_rb.position, transform.position + transform.TransformDirection(new Vector3(_x, 0, _z)), 10 * Time.fixedDeltaTime);
         //}
 
+        Debug.Log(_rb.velocity);
         // Gravity
-        Vector3 grav = -gravity * Vector3.up;
-        _rb.AddForce(grav * Time.fixedDeltaTime, ForceMode.Acceleration);
+        Vector3 grav = gravity * Vector3.up;
+        _rb.AddForce(-grav * Time.fixedDeltaTime, ForceMode.Acceleration);
+        //if (!grabbingWall)
+        //{
+        //    _rb.AddForce(-grav * Time.fixedDeltaTime, ForceMode.Acceleration);
+        //}
+        //else if(grabbingWall)
+        //{
+        //    _rb.AddForce(grav/4f * Time.fixedDeltaTime, ForceMode.Acceleration);
+        //}
     }
 
     private void LateUpdate()
     {
         // Assuming marwan doesnt make the animation
         if (currState != States.WEAPON_UP) return;
+        if (isGroundDashing || isJumpDashing) return;
 
         Transform chest = anim.GetBoneTransform(HumanBodyBones.Chest);
         chest.LookAt(targetPos);
@@ -172,6 +193,8 @@ public class PlayerController : MonoBehaviour
     public void Move(Vector2 dir)
     {
         if (!canMove) return;
+        if (isGroundDashing) return;
+        if (grabbingWall) return;
 
         if (_grounded)
             _rb.velocity = transform.TransformDirection(dir.x, _rb.velocity.y, dir.y);
@@ -186,7 +209,7 @@ public class PlayerController : MonoBehaviour
             }
 
             _rb.AddForce(new Vector3(-_rb.velocity.x * jumpDrag, 0, -_rb.velocity.z * jumpDrag) * Time.fixedDeltaTime);
-        } 
+        }
     }
 
     public void Jump(Vector3 dir)
@@ -200,22 +223,74 @@ public class PlayerController : MonoBehaviour
 
     public void Dash()
     {
-        StartCoroutine(m_Dash());
+        if (_grounded)
+            StartCoroutine(m_GDash());
+        else
+            StartCoroutine(m_JDash());
     }
-    IEnumerator m_Dash()
+    IEnumerator m_GDash()
     {
         Vector3 dir = transform.TransformDirection(new Vector3(_x, 0, _z));
-        for(int i = 0; i < 50; i++)
+        if (dir == Vector3.zero) yield break;
+        isGroundDashing = true;
+        transform.rotation = Quaternion.LookRotation(dir);
+        if(currState == States.WEAPON_UP)
+        {
+            anim.SetLayerWeight(1, 0);
+        }
+        for (int i = 0; i < 50; i++)
         {
             if (!_grounded) continue;
-            _rb.AddForce(dir * 5000 * Time.fixedDeltaTime);
-            yield return new WaitForSeconds(0.5f / 50);
+            if (Input.GetMouseButton(0) && currState == States.WEAPON_UP) break;
+            _rb.AddForce(transform.TransformDirection(Vector3.forward) * groundDashForce * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            yield return new WaitForSeconds(groundDashDuration / 50);
         }
-        //_rb.MovePosition(transform.position + transform.TransformDirection(new Vector3(_x, 0, _z)));
-        isDashing = true;
-        //yield return new WaitForSeconds(0.5f);
+        if (currState == States.WEAPON_UP)
+        {
+            anim.SetLayerWeight(1, 1);
+        }
         _rb.velocity = Vector3.zero;
-        isDashing = false;
+        isGroundDashing = false;
+    }
+
+    IEnumerator m_JDash()
+    {
+        Vector3 dir = transform.TransformDirection(new Vector3(_x, 0, _z));
+        if (dir == Vector3.zero) yield break;
+        isJumpDashing = true;
+        transform.rotation = Quaternion.LookRotation(dir);
+        if (currState == States.WEAPON_UP)
+        {
+            anim.SetLayerWeight(1, 0);
+        }
+        for (int i = 0; i < 50; i++)
+        {
+            if (_grounded) break;
+            _rb.AddForce(transform.TransformDirection(Vector3.forward) * jumpDashForce * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            yield return new WaitForSeconds(jumpDashDuration / 50);
+        }
+        if (currState == States.WEAPON_UP)
+        {
+            anim.SetLayerWeight(1, 1);
+        }
+        _rb.velocity = Vector3.zero;
+        isJumpDashing = false;
+    }
+
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.tag == "Wall" && !_grounded && !grabbingWall && _rb.velocity.y < 0)
+        {
+            grabbingWall = true;
+            //gravity = 10;
+            _rb.AddForce(gravity / 2 * Vector3.up * Time.fixedDeltaTime, ForceMode.Acceleration);
+        }
+        else
+        {
+            grabbingWall = false;
+            //gravity = 1400;
+        }
     }
 
     public void shootingHandling()
@@ -249,6 +324,8 @@ public class PlayerController : MonoBehaviour
     {
         anim.SetBool("Grounded", _grounded);
         anim.SetBool("Rifle", rifleUp);
+        anim.SetBool("isGroundDashing", isGroundDashing);
+        anim.SetBool("isJumpDashing", isJumpDashing);
 
         if (_rb.velocity.y > (0 + 1.5f))
         {
@@ -288,9 +365,13 @@ public class PlayerController : MonoBehaviour
 
     public void handleRotation()
     {
+        if (isGroundDashing) return;
+        if (isJumpDashing) return;
+
+
         Quaternion rot = Quaternion.identity;
         rot.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, camBase.gameObject.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-        transform.rotation = rot;
+        transform.rotation = Quaternion.Slerp(transform.rotation, rot, 1);
     }
 
     public void statesHanlder()

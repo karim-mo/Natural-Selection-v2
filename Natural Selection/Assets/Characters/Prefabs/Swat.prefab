@@ -464,9 +464,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   peakSpeed: 3
   mainSpeed: 4.5
-  jumpForce: 10.5
   gravity: 1400
+  jumpForce: 10.5
   jumpDrag: 100
+  groundDashForce: 8
+  groundDashDuration: 0.3
+  jumpDashForce: 20
+  jumpDashDuration: 0.3
   camBase: {fileID: 0}
   jumpableLayers:
     serializedVersion: 2
