@@ -40,6 +40,9 @@ public class PlayerController : MonoBehaviour
     private float _currSpeed;
     private float _x;
     private float _z;
+    private float m_x;
+    private float m_z;
+    private float m_prevX;
     private float mainCamFOV;
     private float aimFOV;
     private bool _grounded;
@@ -49,6 +52,9 @@ public class PlayerController : MonoBehaviour
     private bool isReloading;
     private bool isGrabbingWep;
     private bool isHolsteringWep;
+    private bool isCrouching;
+    private bool m_xDecreased;
+    private bool isDashing;
 
     private Rigidbody _rb;
     private Animator anim;
@@ -72,11 +78,23 @@ public class PlayerController : MonoBehaviour
     {
         statesHanlder();
 
-        _x = Mathf.Clamp(Input.GetAxis("Horizontal") * 2, -1, 1);
-        _z = Mathf.Clamp(Input.GetAxis("Vertical") * 2, -1, 1);
+        m_x = Mathf.Clamp(Input.GetAxis("Horizontal") * 2, -1, 1);
+        m_z = Mathf.Clamp(Input.GetAxis("Vertical") * 2, -1, 1);
 
-        anim.SetFloat("VelX", _x);
-        anim.SetFloat("VelZ", _z);
+        anim.SetFloat("VelX", m_x);
+        anim.SetFloat("VelZ", m_z);
+
+        //Debug.Log(m_z);
+        //if (!isCrouching)
+        //{
+        //    anim.SetFloat("VelX", m_x);
+        //    anim.SetFloat("VelZ", m_z);
+        //}
+        //else
+        //{
+        //    anim.SetFloat("VelX", _x);
+        //    anim.SetFloat("VelZ", _z);
+        //}
 
         _x = Input.GetAxisRaw("Horizontal");
         _z = Input.GetAxisRaw("Vertical");
@@ -108,9 +126,12 @@ public class PlayerController : MonoBehaviour
         }
 
         Move(new Vector2(finalSpeedX, finalSpeedZ));
-        
 
 
+        //if (isDashing)
+        //{
+        //    _rb.position = Mathf.Lerp(_rb.position, transform.position + transform.TransformDirection(new Vector3(_x, 0, _z)), 10 * Time.fixedDeltaTime);
+        //}
 
         // Gravity
         Vector3 grav = -gravity * Vector3.up;
@@ -119,13 +140,29 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
+        // Assuming marwan doesnt make the animation
         if (currState != States.WEAPON_UP) return;
 
         Transform chest = anim.GetBoneTransform(HumanBodyBones.Chest);
         chest.LookAt(targetPos);
-        chest.Rotate(10, 45, 0, Space.Self);
+        if (!isCrouching)
+            chest.Rotate(10, 45, 0, Space.Self);
+        else
+        {
+            if (Mathf.Abs(_x) == 1 && Mathf.Abs(_z) == 0)
+                chest.Rotate(20, 55, 0, Space.Self);
+            else if (Mathf.Abs(_z) == 1 && Mathf.Abs(_x) == 0)
+                chest.Rotate(0, 45, 0, Space.Self);
+            else if (Mathf.Abs(_x) == 0 && Mathf.Abs(_z) == 0)
+                chest.Rotate(20, 55, 0, Space.Self);
+        }
     }
     #endregion
+
+    public bool checkDecrease()
+    {
+        return m_x < m_prevX;
+    }
 
     public bool isGrounded()
     {
@@ -159,6 +196,26 @@ public class PlayerController : MonoBehaviour
         
         _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
         _rb.velocity += dir * jumpForce;
+    }
+
+    public void Dash()
+    {
+        StartCoroutine(m_Dash());
+    }
+    IEnumerator m_Dash()
+    {
+        Vector3 dir = transform.TransformDirection(new Vector3(_x, 0, _z));
+        for(int i = 0; i < 50; i++)
+        {
+            if (!_grounded) continue;
+            _rb.AddForce(dir * 5000 * Time.fixedDeltaTime);
+            yield return new WaitForSeconds(0.5f / 50);
+        }
+        //_rb.MovePosition(transform.position + transform.TransformDirection(new Vector3(_x, 0, _z)));
+        isDashing = true;
+        //yield return new WaitForSeconds(0.5f);
+        _rb.velocity = Vector3.zero;
+        isDashing = false;
     }
 
     public void shootingHandling()
@@ -216,6 +273,7 @@ public class PlayerController : MonoBehaviour
         isReloading = false;
         isGrabbingWep = false;
         isHolsteringWep = false;
+        isCrouching = false;
     }
 
     public void refInit()
@@ -295,6 +353,34 @@ public class PlayerController : MonoBehaviour
         else
         {
             cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, mainCamFOV, Time.deltaTime * 10);
+        }
+
+        //if (Input.GetKey(KeyCode.C) && currState == States.WEAPON_UP)
+        //{
+        //    isCrouching = true;
+        //    anim.SetLayerWeight(2, 1);
+        //}
+        //else
+        //{
+        //    isCrouching = false;
+        //    //anim.SetLayerWeight(2, 0);
+        //}
+        //if (Input.GetKeyDown(KeyCode.LeftControl) && currState == States.WEAPON_UP)
+        //{
+        //    isCrouching = !isCrouching;
+        //    if (isCrouching) anim.SetLayerWeight(2, 1);
+        //    else anim.SetLayerWeight(2, 0);
+
+        //}
+        //if(!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D) && isCrouching)
+        //{
+        //    anim.SetFloat("VelX", 0);
+        //    anim.SetFloat("VelZ", 0);
+        //}
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Dash();
         }
     }
 
