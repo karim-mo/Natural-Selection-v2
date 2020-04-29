@@ -9971,6 +9971,16 @@ PrefabInstance:
       propertyPath: elbow
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6970251614849510018, guid: ca3408df76eb4a049943f1f8b4d35fb0,
+        type: 3}
+      propertyPath: normalGravity
+      value: 1400
+      objectReference: {fileID: 0}
+    - target: {fileID: 6970251614849510018, guid: ca3408df76eb4a049943f1f8b4d35fb0,
+        type: 3}
+      propertyPath: wallGravity
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 6970251614849510020, guid: ca3408df76eb4a049943f1f8b4d35fb0,
         type: 3}
       propertyPath: m_Constraints
