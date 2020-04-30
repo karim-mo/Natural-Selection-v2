@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
+
 
 public class ShootingHandling : MonoBehaviour
 {
@@ -95,6 +93,7 @@ public class ShootingHandling : MonoBehaviour
     public void Reload()
     {
         if (currWeapon.currReserve <= 0) return;
+
         int m_bullets = currWeapon.bullets - currWeapon.currBullets;
         int m_reserve = currWeapon.currReserve - m_bullets;
 
