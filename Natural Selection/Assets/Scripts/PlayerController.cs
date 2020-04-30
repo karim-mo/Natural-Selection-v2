@@ -45,6 +45,12 @@ public class PlayerController : MonoBehaviour
     public bool jump;
     [HideInInspector]
     public int currState = -1;
+    [HideInInspector]
+    public bool fire;
+    [HideInInspector]
+    public Vector3 aimOffset;
+    [HideInInspector]
+    public bool isReloading;
     #endregion
 
 
@@ -62,7 +68,6 @@ public class PlayerController : MonoBehaviour
     private bool canMove;
     private bool rifleUp;
     private bool canShoot;
-    private bool isReloading;
     private bool isGrabbingWep;
     private bool isHolsteringWep;
     private bool isCrouching;
@@ -169,18 +174,10 @@ public class PlayerController : MonoBehaviour
         //    _rb.position = Mathf.Lerp(_rb.position, transform.position + transform.TransformDirection(new Vector3(_x, 0, _z)), 10 * Time.fixedDeltaTime);
         //}
 
-        //Debug.Log(_rb.velocity);
+
         // Gravity
         Vector3 grav = gravity * Vector3.up;
         _rb.AddForce(-grav * Time.fixedDeltaTime, ForceMode.Acceleration);
-        //if (!grabbingWall)
-        //{
-        //    _rb.AddForce(-grav * Time.fixedDeltaTime, ForceMode.Acceleration);
-        //}
-        //else if(grabbingWall)
-        //{
-        //    _rb.AddForce(grav/4f * Time.fixedDeltaTime, ForceMode.Acceleration);
-        //}
     }
 
     private void LateUpdate()
@@ -280,7 +277,6 @@ public class PlayerController : MonoBehaviour
             if (!_grounded) continue;
             if (Input.GetMouseButton(0) && currState == States.WEAPON_UP) break;
             _rb.AddForce(transform.TransformDirection(Vector3.forward) * groundDashForce * Time.fixedDeltaTime, ForceMode.VelocityChange);
-            //_rb.velocity = cam.transform.TransformDirection(new Vector3(_x, 0, _z)) * groundDashForce;
             yield return new WaitForSeconds(groundDashDuration / 50);
         }
         if (currState == States.WEAPON_UP)
@@ -336,23 +332,29 @@ public class PlayerController : MonoBehaviour
     public void shootingHandling()
     {
         if (!canMove) return;
+        if (currState != States.WEAPON_UP) return;
+        if (grabbingWall) return;
+        if (isGroundDashing || isJumpDashing) return;
+        if (isGrabbingWep || isHolsteringWep) return;
+        if (isReloading) return;
 
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        Debug.DrawRay(ray.origin, ray.direction * 40f, Color.red);
+        Debug.DrawRay(ray.origin, ray.direction * 200f, Color.red);
         RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 40f))
+        fire = Input.GetButton("Fire1");
+        if (Physics.Raycast(ray, out hit, 200f))
         {
-            //Debug.Log(hit.point + " " + hit.collider.gameObject.name);
             targetPos = hit.point;
+            if (fire)
+            {
+                weapon.Shoot(targetPos, 200f);
+            }
         }
         else
         {
-            //Debug.Log(ray.GetPoint(20f));
-            targetPos = ray.GetPoint(20f);
+            targetPos = ray.GetPoint(200f);
+            weapon.Shoot(targetPos, 200f);
         }
-
-
     }
 
     public float velocityCalc(Vector3 velocity)
@@ -436,9 +438,9 @@ public class PlayerController : MonoBehaviour
             StartCoroutine("HolsterWeapon");
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && currState == States.WEAPON_UP && !isReloading && !isGrabbingWep && !isHolsteringWep)
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            StartCoroutine("Reload");
+            m_Reload();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1) && currState == States.WEAPON_UP && !isReloading && !isHolsteringWep && !isGrabbingWep)
@@ -453,7 +455,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine("GrabWeapon");
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1) && currState == States.WEAPON_DOWN)
+        if (Input.GetKeyDown(KeyCode.Alpha1) && currState == States.WEAPON_DOWN && !isReloading && !isHolsteringWep && !isGrabbingWep)
         {
             weapon.currWeapon = weapon.currWeapons[0];
             StartCoroutine("GrabWeapon");
@@ -472,7 +474,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine("GrabWeapon");
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha2) && currState == States.WEAPON_DOWN)
+        if (Input.GetKeyDown(KeyCode.Alpha2) && currState == States.WEAPON_DOWN && !isReloading && !isHolsteringWep && !isGrabbingWep)
         {
             weapon.currWeapon = weapon.currWeapons[1];
             if(weapon.currWeapon.go == null) weapon.currWeapon.go = Instantiate(weapon.currWeapon.prefab);
@@ -488,33 +490,20 @@ public class PlayerController : MonoBehaviour
             cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, mainCamFOV, Time.deltaTime * 10);
         }
 
-        //if (Input.GetKey(KeyCode.C) && currState == States.WEAPON_UP)
-        //{
-        //    isCrouching = true;
-        //    anim.SetLayerWeight(2, 1);
-        //}
-        //else
-        //{
-        //    isCrouching = false;
-        //    //anim.SetLayerWeight(2, 0);
-        //}
-        //if (Input.GetKeyDown(KeyCode.LeftControl) && currState == States.WEAPON_UP)
-        //{
-        //    isCrouching = !isCrouching;
-        //    if (isCrouching) anim.SetLayerWeight(2, 1);
-        //    else anim.SetLayerWeight(2, 0);
-
-        //}
-        //if(!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D) && isCrouching)
-        //{
-        //    anim.SetFloat("VelX", 0);
-        //    anim.SetFloat("VelZ", 0);
-        //}
-
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F) && !isReloading && !isHolsteringWep && !isGrabbingWep && !isGroundDashing && !isJumpDashing)
         {
             Dash();
         }
+    }
+
+    public void m_Reload()
+    {
+        if (currState != States.WEAPON_UP) return;
+        if (isReloading || isGrabbingWep || isHolsteringWep) return;
+        if (weapon.currWeapon.currBullets >= weapon.currWeapon.bullets) return;
+        if (weapon.currWeapon.currReserve <= 0) return;
+
+        StartCoroutine("Reload");
     }
 
     IEnumerator HolsterWeapon()
@@ -581,6 +570,7 @@ public class PlayerController : MonoBehaviour
         }
         canShoot = true;
         Reloading.Reloaded = false;
+        weapon.Reload();
         isReloading = false;
     }
 }

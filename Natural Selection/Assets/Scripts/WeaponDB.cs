@@ -26,6 +26,7 @@ public class WeaponDB : MonoBehaviour
         public int fireAmount;
         public float fireRate;
         public float animSpeed;
+        public float reloadSpeed;
     }
 
     public Weapons[] gameWeapons;

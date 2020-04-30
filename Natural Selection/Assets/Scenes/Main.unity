@@ -710,7 +710,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 385965568}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 374752300}
@@ -9822,6 +9822,7 @@ MonoBehaviour:
     fireAmount: 1
     fireRate: 0.1
     animSpeed: 1.5
+    reloadSpeed: 0
   - prefab: {fileID: 5735490956614996096, guid: f52b30236a0343843a01749f9a1d4bff,
       type: 3}
     go: {fileID: 0}
@@ -9839,6 +9840,7 @@ MonoBehaviour:
     fireAmount: 1
     fireRate: 0.1
     animSpeed: 1.5
+    reloadSpeed: 0
 --- !u!1001 &1908172730
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9973,14 +9975,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6970251614849510018, guid: ca3408df76eb4a049943f1f8b4d35fb0,
         type: 3}
-      propertyPath: normalGravity
-      value: 1400
-      objectReference: {fileID: 0}
-    - target: {fileID: 6970251614849510018, guid: ca3408df76eb4a049943f1f8b4d35fb0,
+      propertyPath: bulletHole
+      value: 
+      objectReference: {fileID: 7946735395888295587, guid: ad513ab0c6bc19641a054976f13b9ff6,
         type: 3}
-      propertyPath: wallGravity
-      value: 200
-      objectReference: {fileID: 0}
     - target: {fileID: 6970251614849510020, guid: ca3408df76eb4a049943f1f8b4d35fb0,
         type: 3}
       propertyPath: m_Constraints
