@@ -9825,7 +9825,7 @@ MonoBehaviour:
     reloadSpeed: 1
     recoilSpeed: 2
     recoilRate: 0.2
-    recoilStrength: 1
+    recoilStrength: 0.5
     recoils:
     - curve:
         serializedVersion: 2
