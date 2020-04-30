@@ -46,6 +46,10 @@ public class PlayerController : MonoBehaviour
     public Vector3 aimOffset;
     [HideInInspector]
     public bool isReloading;
+    [HideInInspector]
+    public Camera cam;
+    [HideInInspector]
+    public Vector3 targetPos;
     #endregion
 
 
@@ -74,12 +78,10 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _rb;
     private Animator anim;
     private CapsuleCollider col;
-    private Camera cam;
     private ShootingHandling weapon;
 
     private RaycastHit _ground;
     private Vector3 _groundLoc;
-    private Vector3 targetPos;
     #endregion
 
     void Start()
@@ -126,7 +128,7 @@ public class PlayerController : MonoBehaviour
             Ray ray = new Ray(transform.position, transform.TransformDirection(Vector3.forward));
             RaycastHit hit;
             Physics.Raycast(ray, out hit, 0.25f);
-            print(hit.collider);
+            //print(hit.collider);
             if (hit.collider != null && hit.collider.CompareTag("Wall"))
             {
                 grabbingWall = true;
@@ -340,6 +342,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out hit, 200f))
         {
             targetPos = hit.point;
+            
             if (fire)
             {
                 weapon.Shoot(targetPos, 200f);

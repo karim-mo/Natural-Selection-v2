@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
+using UnityEngine.Timeline;
 
 public class ShootingHandling : MonoBehaviour
 {
@@ -15,12 +16,14 @@ public class ShootingHandling : MonoBehaviour
     public GameObject bulletHole;
 
 
+    public Camera cam;
+
     private PlayerController player;
     private Vector3 aimOffset;
     private float nextFire;
     private float nextRecoil;
     private float recoilTimer;
-
+    private Vector3 origin;
 
     [HideInInspector]
     public List<WeaponDB.Weapons> currWeapons;
@@ -57,7 +60,7 @@ public class ShootingHandling : MonoBehaviour
             player.m_Reload();
         }
 
-        Recoil();
+        Recoil(player.targetPos);
     }
 
     public void Shoot(Vector3 target, float range)
@@ -120,7 +123,7 @@ public class ShootingHandling : MonoBehaviour
 
     }
 
-    public void Recoil()
+    public void Recoil(Vector3 target)
     {
         if (nextRecoil > Time.time)
         {
@@ -139,24 +142,41 @@ public class ShootingHandling : MonoBehaviour
             }
 
             aimOffset = Vector3.Lerp(aimOffset, aimOffset + allRecoils, currWeapon.recoilStrength * Time.deltaTime);
+            Vector3 diff = target - (target + aimOffset);
+            //Debug.Log(diff);
+            //player.camBase.transform.LookAt(target, Vector3.up);
+            
+            //player.cam.transform.DOShakeRotation(target + aimOffset, 0.1f);
+            //player.cam.transform.DOMove
+            //player.camBase.mouseX += 20;
+            //player.cam.DOShakePosition(0.01f, aimOffset + allRecoils, 0, 0, false);
+            //player.cam.DOShakePosition(1f, (target + aimOffset) / 2f, 2, 0, false);
+            //player.cam.transform.localPosition = 
+            //Vector3.Lerp(player.cam.transform.localPosition, (player.cam.transform.localPosition + aimOffset) / 2f , 30 * Time.deltaTime);
         }
         else
         {
-            if (recoilTimer > currWeapon.recoilSpeed / 2f)
-            {
-                recoilTimer -= Time.deltaTime * 2;
-            }
-            else
-            {
-                recoilTimer -= Time.deltaTime;
-            }
-            //recoilTimer = Mathf.Clamp(recoilTimer, recoilTimer, 0);
-            if (recoilTimer < 0) recoilTimer = 0;
+            //player.cam.transform.LookAt(new Vector3(0, transform.position.y, 0));
+            //player.cam.transform.rotation = Quaternion.identity;
+            //player.cam.transform.LookAt(Quaternion.identity);
+            //player.cam.transform.LookAt()
+            //if (recoilTimer > currWeapon.recoilSpeed / 2f)
+            //{
+            //    recoilTimer -= Time.deltaTime * 2;
+            //}
+            //else
+            //{
+            //    recoilTimer -= Time.deltaTime;
+            //}
+            ////recoilTimer = Mathf.Clamp(recoilTimer, recoilTimer, 0);
+            //if (recoilTimer < 0) recoilTimer = 0;
 
-            if(recoilTimer <= 0)
-            {
-                aimOffset = Vector3.zero;
-            }
+            //if (recoilTimer <= 0)
+            //{
+            //    aimOffset = Vector3.zero;
+            //}
+            recoilTimer = 0;
+            aimOffset = Vector3.zero;
         }
     }
 
