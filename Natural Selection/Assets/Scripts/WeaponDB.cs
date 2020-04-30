@@ -6,6 +6,13 @@ using UnityEngine;
 public class WeaponDB : MonoBehaviour
 {
     public static WeaponDB instance;
+    [System.Serializable]
+    public class Recoil
+    {
+        public AnimationCurve curve;
+        public Vector3 direction;
+    }
+
 
     [System.Serializable]
     public class Weapons
@@ -27,6 +34,10 @@ public class WeaponDB : MonoBehaviour
         public float fireRate;
         public float animSpeed;
         public float reloadSpeed;
+        public float recoilSpeed;
+        public float recoilRate;
+        public float recoilStrength;
+        public Recoil[] recoils;
     }
 
     public Weapons[] gameWeapons;

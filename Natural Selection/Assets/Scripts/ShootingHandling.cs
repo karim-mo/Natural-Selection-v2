@@ -16,7 +16,11 @@ public class ShootingHandling : MonoBehaviour
 
 
     private PlayerController player;
+    private Vector3 aimOffset;
     private float nextFire;
+    private float nextRecoil;
+    private float recoilTimer;
+
 
     [HideInInspector]
     public List<WeaponDB.Weapons> currWeapons;
@@ -30,6 +34,7 @@ public class ShootingHandling : MonoBehaviour
     void Start()
     {
         player = GetComponent<PlayerController>();
+        aimOffset = Vector3.zero;
         currWeapons = new List<WeaponDB.Weapons>();
         currWeapons.Add(WeaponDB.instance.GetWeaponByName("M4A1"));
         currWeapons.Add(WeaponDB.instance.GetWeaponByName("AK47"));
@@ -51,16 +56,19 @@ public class ShootingHandling : MonoBehaviour
         {
             player.m_Reload();
         }
+
+        Recoil();
     }
 
     public void Shoot(Vector3 target, float range)
     {
         if (player.fire && Time.time >= nextFire && !player.isReloading && currWeapon.currBullets > 0)
         {
+            nextRecoil = Time.time + currWeapon.recoilRate;
             nextFire = Time.time + currWeapon.fireRate;
             Transform weapTransform = currWeapon.go.transform;
             Transform muzzle = weapTransform.GetChild(weapTransform.childCount - 1);
-            muzzle.LookAt(target, Vector3.up);
+            muzzle.LookAt(target + aimOffset, Vector3.up);
             Ray ray = new Ray(muzzle.position, muzzle.transform.forward);
             RaycastHit hit;
             Physics.Raycast(ray, out hit, range);
@@ -69,7 +77,7 @@ public class ShootingHandling : MonoBehaviour
             {
                 GameObject go = Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
                 Destroy(go, 10f);
-                Destroy(hit.collider.gameObject);
+                //Destroy(hit.collider.gameObject);
             }
             currWeapon.currBullets--;
         }
@@ -78,6 +86,9 @@ public class ShootingHandling : MonoBehaviour
     public void Attach(GameObject weapon, WeaponDB.Weapons refWeapon)
     {
         nextFire = 0;
+        nextRecoil = 0;
+        recoilTimer = 0;
+        aimOffset = Vector3.zero;
         weapon.transform.SetParent(rightHand, false);
         weapon.transform.localPosition = refWeapon.handPos;
         weapon.transform.localEulerAngles = refWeapon.handRot;
@@ -107,6 +118,46 @@ public class ShootingHandling : MonoBehaviour
         currWeapon.currBullets += m_bullets;
         currWeapon.currReserve = m_reserve;
 
+    }
+
+    public void Recoil()
+    {
+        if (nextRecoil > Time.time)
+        {
+            recoilTimer += Time.deltaTime;
+            recoilTimer = Mathf.Clamp(recoilTimer, 0, currWeapon.recoilSpeed);
+            float curveTime = recoilTimer / currWeapon.recoilSpeed;
+
+
+            //All recoils for this bullet
+            Vector3 allRecoils = Vector3.zero;
+            for(int i = 0; i < currWeapon.recoils.Length; i++)
+            {
+                if (recoilTimer == currWeapon.recoilSpeed) continue;
+
+                allRecoils += transform.TransformDirection(currWeapon.recoils[i].direction) * currWeapon.recoils[i].curve.Evaluate(curveTime);
+            }
+
+            aimOffset = Vector3.Lerp(aimOffset, aimOffset + allRecoils, currWeapon.recoilStrength * Time.deltaTime);
+        }
+        else
+        {
+            if (recoilTimer > currWeapon.recoilSpeed / 2f)
+            {
+                recoilTimer -= Time.deltaTime * 2;
+            }
+            else
+            {
+                recoilTimer -= Time.deltaTime;
+            }
+            //recoilTimer = Mathf.Clamp(recoilTimer, recoilTimer, 0);
+            if (recoilTimer < 0) recoilTimer = 0;
+
+            if(recoilTimer <= 0)
+            {
+                aimOffset = Vector3.zero;
+            }
+        }
     }
 
 }

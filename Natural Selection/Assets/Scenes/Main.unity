@@ -9815,14 +9815,104 @@ MonoBehaviour:
     name: M4A1
     type: Assault Rifle
     bullets: 30
-    reserve: 120
+    reserve: 300
     currBullets: 0
     currReserve: 0
     damage: 10
     fireAmount: 1
     fireRate: 0.1
-    animSpeed: 1.5
-    reloadSpeed: 0
+    animSpeed: 1
+    reloadSpeed: 1
+    recoilSpeed: 2
+    recoilRate: 0.2
+    recoilStrength: 1
+    recoils:
+    - curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 0
+      direction: {x: 0, y: 0.5, z: 0}
+    - curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0.0013427734
+          inSlope: 2.5532053
+          outSlope: 2.5532053
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 0.19757162
+          value: 0.5057837
+          inSlope: -1.1740175
+          outSlope: -1.1740175
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 0.40247837
+          value: -0.49851352
+          inSlope: 0.08768797
+          outSlope: 0.08768797
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 0.6001625
+          value: 0.505053
+          inSlope: -0.0069646835
+          outSlope: -0.0069646835
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 0.79781973
+          value: -0.5011302
+          inSlope: -1.3026367
+          outSlope: -1.3026367
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 0.0013427734
+          inSlope: 2.4852722
+          outSlope: 2.4852722
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 0
+      direction: {x: 1, y: 0, z: 0}
   - prefab: {fileID: 5735490956614996096, guid: f52b30236a0343843a01749f9a1d4bff,
       type: 3}
     go: {fileID: 0}
@@ -9839,8 +9929,12 @@ MonoBehaviour:
     damage: 10
     fireAmount: 1
     fireRate: 0.1
-    animSpeed: 1.5
-    reloadSpeed: 0
+    animSpeed: 1
+    reloadSpeed: 1
+    recoilSpeed: 0
+    recoilRate: 0
+    recoilStrength: 0
+    recoils: []
 --- !u!1001 &1908172730
 PrefabInstance:
   m_ObjectHideFlags: 0
