@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using TMPro;
 
 public class PlayerEntries : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class PlayerEntries : MonoBehaviour
         if (PhotonNetwork.LocalPlayer.ActorNumber != ID)
         {
             Rdy.gameObject.SetActive(false);
+            //Rdy.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Ready?";
         }
         else
         {
@@ -31,7 +33,7 @@ public class PlayerEntries : MonoBehaviour
                 ready = true;
                 Hashtable props = new Hashtable() { { "PlayerReady", ready } };
                 PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-
+                Rdy.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Ready!";
                 FindObjectOfType<NetworkManager>().check();
             });
 

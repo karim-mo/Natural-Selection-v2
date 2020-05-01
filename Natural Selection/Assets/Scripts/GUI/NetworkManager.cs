@@ -75,39 +75,22 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.ConnectUsingSettings();
     }
 
-    public override void OnConnectedToMaster()
-    {
-        Debug.Log("Connected!");
-        label.GetComponent<TextMeshProUGUI>().text = "Connected Succesfully!";
-        StartCoroutine("JoinOrCreate");
-    }
-
-
-    public override void OnDisconnected(DisconnectCause cause)
-    {
-        Debug.LogWarningFormat("Disconnected with reason {0}", cause);
-    }
-
-
 
     #region namephase
     public void nameEnter()
     {
         //AudioManager.Play("Click");
         string text = _textInput.GetComponent<TMP_InputField>().text;
-        if(text == "" || text.Length > 15 || text.Length < 5)
+        if (text == "" || text.Length > 15 || text.Length < 5)
         {
             return;
-        } 
+        }
         PhotonNetwork.NetworkingClient.State = ClientState.Disconnected;
         PlayerPrefs.SetString("NAME", text);
         mainMenu.SetActive(true);
         namePhase.SetActive(false);
     }
     #endregion
-
-
-    #region Join/Create
 
     public void JoinRoom()
     {
@@ -129,6 +112,52 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Room.SetActive(true);
         Join_Create.SetActive(false);
     }
+
+    public void joincreateBack()
+    {
+        //AudioManager.Play("Click");
+        isConnecting = false;
+        if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
+        PhotonNetwork.NetworkingClient.State = ClientState.Disconnected;
+        mainMenu.SetActive(true);
+        Join_Create.SetActive(false);
+    }
+
+    #region RoomList
+    public void roomListBack()
+    {
+        //AudioManager.Play("Click");
+        PhotonNetwork.LeaveLobby();
+        Join_Create.SetActive(true);
+        RoomList.SetActive(false);
+    }
+    #endregion
+
+
+    public override void OnConnectedToMaster()
+    {
+        if (PhotonNetwork.IsConnected && RoomList.activeInHierarchy)
+        {
+            PhotonNetwork.JoinLobby();
+            return;
+        }
+        Debug.Log("Connected!");
+        label.GetComponent<TextMeshProUGUI>().text = "Connected Succesfully!";
+        StartCoroutine("JoinOrCreate");
+    }
+
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        Debug.LogWarningFormat("Disconnected with reason {0}", cause);
+    }
+
+
+
+
+    #region Join/Create
+
+    
 
     public override void OnJoinedRoom()
     {
@@ -187,31 +216,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        //Debug.Log("kms");
+        Debug.Log("kms");
     }
-    public void joincreateBack()
+    public override void OnLeftLobby()
     {
-        AudioManager.Play("Click");
-        isConnecting = false;
-        if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
-        PhotonNetwork.NetworkingClient.State = ClientState.Disconnected;
-        mainMenu.SetActive(true);
-        Join_Create.SetActive(false);
+        Debug.Log("kms2");
     }
+    
+
     #endregion
 
 
-    #region RoomList
-    public void roomListBack()
-    {
-        AudioManager.Play("Click");
-        isConnecting = false;
-        if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
-        PhotonNetwork.NetworkingClient.State = ClientState.Disconnected;
-        mainMenu.SetActive(true);
-        RoomList.SetActive(false);
-    }
-    #endregion
+
 
     #region room
 
@@ -229,6 +245,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             object isReady;
             if (player.CustomProperties.TryGetValue("PlayerReady", out isReady))
             {
+                //object text;
+                //if(player.CustomProperties.TryGetValue("PlayerReadyText", out text))
+                //{
+                //    RectTransform _text = (RectTransform)text;
+                //    _text.GetComponent<TextMeshProUGUI>().text = (bool)isReady ? "Ready!" : "Ready?";
+                //}
+
                 if (!(bool)isReady)
                 {
                     return false;
@@ -246,19 +269,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public void roomBack()
     {
-        AudioManager.Play("Click");
-        isConnecting = false;
-        PhotonNetwork.LeaveRoom();
-        if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
-        PhotonNetwork.NetworkingClient.State = ClientState.Disconnected;
-        mainMenu.SetActive(true);
+        //AudioManager.Play("Click");
+        PhotonNetwork.LeaveRoom();      
+        RoomList.SetActive(true);
+        PhotonNetwork.JoinLobby();
         Room.SetActive(false);
     }
     public void startGame()
     {
-        AudioManager.Play("Click");
+        //AudioManager.Play("Click");
         PhotonNetwork.OfflineMode = false;
         PlayerPrefs.SetInt("scene", SceneManager.GetActiveScene().buildIndex + 2);
+        PlayerPrefs.SetString("LSText", "Connecting to match");
         PhotonNetwork.LoadLevel("LoadingScreen");
     }
     #endregion

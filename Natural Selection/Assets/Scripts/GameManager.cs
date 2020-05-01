@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        Screen.SetResolution(PlayerPrefs.GetInt("Width", 1920), PlayerPrefs.GetInt("Height", 1080), FullScreenMode.FullScreenWindow);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
     }

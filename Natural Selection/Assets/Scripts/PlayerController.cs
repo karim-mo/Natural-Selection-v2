@@ -128,7 +128,7 @@ public class PlayerController : MonoBehaviour
             Ray ray = new Ray(transform.position, transform.TransformDirection(Vector3.forward));
             RaycastHit hit;
             Physics.Raycast(ray, out hit, 0.25f);
-            //print(hit.collider);
+            //print(hit.collider.tag);
             if (hit.collider != null && hit.collider.CompareTag("Wall"))
             {
                 grabbingWall = true;
