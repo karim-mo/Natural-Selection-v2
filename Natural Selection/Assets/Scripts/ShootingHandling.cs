@@ -19,7 +19,7 @@ public class ShootingHandling : MonoBehaviour
     public Camera cam;
 
     private PlayerController player;
-    private Vector3 aimOffset;
+    
     private float nextFire;
     private float nextRecoil;
     private float recoilTimer;
@@ -33,6 +33,8 @@ public class ShootingHandling : MonoBehaviour
     public WeaponDB.Weapons prevWeapon;
     [HideInInspector]
     public bool inShootCD;
+    [HideInInspector]
+    public Vector3 aimOffset;
 
     void Start()
     {

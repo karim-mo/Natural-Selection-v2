@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour
         if (grabbingWall) return;
 
         Transform chest = anim.GetBoneTransform(HumanBodyBones.Chest);
-        chest.LookAt(targetPos);
+        chest.LookAt(targetPos + weapon.aimOffset);
         if (!isCrouching)
             chest.Rotate(10, 45, 0, Space.Self);
         else
