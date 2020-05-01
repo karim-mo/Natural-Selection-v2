@@ -571,6 +571,11 @@ GameObject:
   - component: {fileID: 6910397151928813972}
   - component: {fileID: 6910397151928813973}
   - component: {fileID: 5520013390022163975}
+  - component: {fileID: 8566382339398538046}
+  - component: {fileID: -3544466916107040789}
+  - component: {fileID: 7841271121520892488}
+  - component: {fileID: -2321624028608837}
+  - component: {fileID: -5705025104936605093}
   m_Layer: 0
   m_Name: Swat
   m_TagString: Player
@@ -656,8 +661,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fca3f8a47a07aa409ccbf1c96adc526, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  peakSpeed: 3
-  mainSpeed: 4.5
+  aimSpeed: 2.5
+  runningSpeed: 4.5
+  strafeSpeed: 2.5
+  backwardSpeed: 2.5
   gravity: 1400
   wallGravity: 200
   normalGravity: 1400
@@ -743,6 +750,145 @@ MonoBehaviour:
     recoils: []
   inShootCD: 0
   aimOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &8566382339398538046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3226623038607819109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55a8b0a08f655b644a772a98cd1ae605, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxStamina: 0
+  staminaRechargeSpeed: 0
+  staminaMaxRechargeSpeed: 0
+  currState: 0
+  staminaBar: {fileID: 0}
+--- !u!114 &-3544466916107040789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3226623038607819109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: -5705025104936605093}
+  - {fileID: 7841271121520892488}
+  - {fileID: -2321624028608837}
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &7841271121520892488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3226623038607819109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 1
+  m_TeleportIfDistanceGreaterThan: 2
+--- !u!114 &-2321624028608837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3226623038607819109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 3
+    SynchronizeType: 2
+    Name: state
+  - Type: 1
+    SynchronizeType: 2
+    Name: VelX
+  - Type: 1
+    SynchronizeType: 2
+    Name: VelZ
+  - Type: 4
+    SynchronizeType: 2
+    Name: Grounded
+  - Type: 9
+    SynchronizeType: 2
+    Name: isIdle
+  - Type: 9
+    SynchronizeType: 2
+    Name: isJumping
+  - Type: 9
+    SynchronizeType: 2
+    Name: isFalling
+  - Type: 4
+    SynchronizeType: 2
+    Name: Rifle
+  - Type: 3
+    SynchronizeType: 2
+    Name: aimState
+  - Type: 9
+    SynchronizeType: 2
+    Name: Holster
+  - Type: 9
+    SynchronizeType: 2
+    Name: GrabWeapon
+  - Type: 9
+    SynchronizeType: 2
+    Name: Reload
+  - Type: 4
+    SynchronizeType: 2
+    Name: isGroundDashing
+  - Type: 4
+    SynchronizeType: 2
+    Name: isJumpDashing
+  - Type: 4
+    SynchronizeType: 2
+    Name: WallSlide
+  m_SynchronizeLayers:
+  - SynchronizeType: 2
+    LayerIndex: 0
+  - SynchronizeType: 2
+    LayerIndex: 1
+  - SynchronizeType: 0
+    LayerIndex: 2
+--- !u!114 &-5705025104936605093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3226623038607819109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
 --- !u!1 &3242295177667589376
 GameObject:
   m_ObjectHideFlags: 0

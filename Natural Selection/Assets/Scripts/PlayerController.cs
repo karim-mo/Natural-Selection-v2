@@ -1,7 +1,8 @@
-﻿using System.Collections;
+﻿using Photon.Pun;
+using System.Collections;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPun
 {
     public static class States
     {
@@ -11,8 +12,10 @@ public class PlayerController : MonoBehaviour
 
     #region Publics
     [Header("Speed settings")]
-    public float peakSpeed;
-    public float mainSpeed;
+    public float aimSpeed;
+    public float runningSpeed;
+    public float strafeSpeed;
+    public float backwardSpeed;
     
     [Header("Gravity settings")]
     public float gravity;
@@ -28,6 +31,8 @@ public class PlayerController : MonoBehaviour
     public float groundDashDuration;
     public float jumpDashForce;
     public float jumpDashDuration;
+
+    
 
     [Header("Components&References")]
     public CameraController camBase;
@@ -74,11 +79,13 @@ public class PlayerController : MonoBehaviour
     private bool isGroundDashing;
     private bool isJumpDashing;
     private bool grabbingWall;
+    private bool Aim;
 
     private Rigidbody _rb;
     private Animator anim;
     private CapsuleCollider col;
     private ShootingHandling weapon;
+    private StaminaHandling stamina;
 
     private RaycastHit _ground;
     private Vector3 _groundLoc;
@@ -93,6 +100,8 @@ public class PlayerController : MonoBehaviour
     #region Updates
     void Update()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+
         statesHanlder();
 
         m_x = Mathf.Clamp(Input.GetAxis("Horizontal") * 2, -1, 1);
@@ -117,9 +126,20 @@ public class PlayerController : MonoBehaviour
         _z = Input.GetAxisRaw("Vertical");
 
 
-
         shootingHandling();
         handleRotation();
+        /*
+        // Should work without detecting inputs since the axis are raw but that's just an extra step
+        if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && !Aim) _currSpeed = runningSpeed;
+        else if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && Mathf.Abs(_x) >= 0 && !Aim) _currSpeed = backwardSpeed;
+        else if (((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) || (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))) && !Aim && _z == 0) _currSpeed = strafeSpeed;
+        else if (Aim) _currSpeed = aimSpeed;
+        */
+        //Fuck the above solution in particular, feels hardcoded
+        if (_z > 0 && Mathf.Abs(_x) >= 0 && !Aim) _currSpeed = runningSpeed;
+        else if (_z < 0 && Mathf.Abs(_x) >= 0 && !Aim) _currSpeed = backwardSpeed;
+        else if (Mathf.Abs(_x) > 0 && !Aim && _z == 0) _currSpeed = strafeSpeed;
+        else if (Aim) _currSpeed = aimSpeed;
 
         //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 0.25f, Color.cyan);
 
@@ -140,7 +160,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        _currSpeed = mainSpeed; // Debugging for now
+        //_currSpeed = runningSpeed; // Debugging for now
 
         jump = Input.GetButtonDown("Jump");
         if (jump) Jump(Vector3.up);
@@ -154,6 +174,8 @@ public class PlayerController : MonoBehaviour
     }
     void FixedUpdate()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+
         float finalSpeedX = _currSpeed * _x;
         float finalSpeedZ = _currSpeed * _z;
 
@@ -179,6 +201,8 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+
         // Assuming marwan doesnt make the animation
         if (currState != States.WEAPON_UP) return;
         if (isGroundDashing || isJumpDashing) return;
@@ -222,7 +246,7 @@ public class PlayerController : MonoBehaviour
             Vector3 F = transform.TransformDirection(dir.x * jumpDrag, 0, dir.y * jumpDrag) * Time.fixedDeltaTime;
             Vector3 V = (F / _rb.mass) * Time.fixedDeltaTime + _rb.velocity;
 
-            if (velocityCalc(V) < mainSpeed)
+            if (velocityCalc(V) < runningSpeed)
             {
                 _rb.AddForce(transform.TransformDirection(dir.x * jumpDrag, 0, dir.y * jumpDrag) * Time.fixedDeltaTime);
             }
@@ -393,6 +417,7 @@ public class PlayerController : MonoBehaviour
         isHolsteringWep = false;
         isCrouching = false;
         grabbingWall = false;
+        Aim = false;
         gravity = normalGravity;
     }
 
@@ -481,14 +506,16 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButton(1) && currState == States.WEAPON_UP && !isReloading && !isHolsteringWep && !isGrabbingWep)
         {
+            Aim = true;
             cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, aimFOV, Time.deltaTime * 15);
         }
         else
         {
+            Aim = false;
             cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, mainCamFOV, Time.deltaTime * 10);
         }
 
-        if (Input.GetKeyDown(KeyCode.F) && !isReloading && !isHolsteringWep && !isGrabbingWep && !isGroundDashing && !isJumpDashing)
+        if (Input.GetKeyDown(KeyCode.F) && !isReloading && !isHolsteringWep && !isGrabbingWep && !isGroundDashing && !isJumpDashing && !grabbingWall)
         {
             Dash();
         }
