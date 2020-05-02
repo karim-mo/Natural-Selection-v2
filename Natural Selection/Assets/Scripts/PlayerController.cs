@@ -191,12 +191,16 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
         {
-            if (grabbingWall || isJumpDashing) return;
+            if (grabbingWall) return;
 
             _rb.velocity = new Vector3(_x * _currSpeed, _rb.velocity.y, _z * _currSpeed);
 
-            Vector3 gravi = gravity * Vector3.up;
-            _rb.AddForce(-gravi * Time.fixedDeltaTime, ForceMode.Acceleration);
+            if (!isJumpDashing)
+            {
+                Vector3 gravi = gravity * Vector3.up;
+                _rb.AddForce(-gravi * Time.fixedDeltaTime, ForceMode.Acceleration);
+
+            }
             return;
         }
 
@@ -251,7 +255,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void updateNetworkPosition()
     {
-        if (grabbingWall || isJumpDashing)
+        if (grabbingWall)
         {
             transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
             return;
@@ -268,7 +272,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         //dir.y = 0;
 
-        if (Mathf.Abs(dir.magnitude) < 0.11f)
+        if (Mathf.Abs(dir.magnitude) < 0.02f)
         {
             _x = 0;
             _z = 0;
