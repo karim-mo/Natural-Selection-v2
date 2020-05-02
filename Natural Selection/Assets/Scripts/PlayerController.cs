@@ -108,11 +108,13 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
         {
+            transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
+
             //Debug.Log(_rb.velocity);
             //updateNetworkPosition();
-            updateNetworkPosition();
+            //updateNetworkPosition();
 
-            
+
             updateNetworkRotation();
             return;
         }
@@ -191,16 +193,20 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
         {
-            if (grabbingWall) return;
+            //if (grabbingWall) return;
 
-            _rb.velocity = new Vector3(_x * _currSpeed, _rb.velocity.y, _z * _currSpeed);
+            //_rb.velocity = new Vector3(_x * _currSpeed, _rb.velocity.y, _z * _currSpeed);
 
-            if (!isJumpDashing)
-            {
-                Vector3 gravi = gravity * Vector3.up;
-                _rb.AddForce(-gravi * Time.fixedDeltaTime, ForceMode.Acceleration);
+            //if (!isJumpDashing)
+            //{
+            //    Vector3 gravi = gravity * Vector3.up;
+            //    _rb.AddForce(-gravi * Time.fixedDeltaTime, ForceMode.Acceleration);
 
-            }
+            //}
+            //else
+            //{
+            //    _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
+            //}
             return;
         }
 
@@ -283,6 +289,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             _z = dir.normalized.z;
         }
         jump = m_networkedPosition.y - transform.position.y > 0.2f;
+        _rb.velocity = new Vector3(_rb.velocity.x, dir.normalized.y * 7, _rb.velocity.z);
+
         if (jump)
         {
             _rb.velocity = new Vector3(_rb.velocity.x, 10.5f, _rb.velocity.z);
