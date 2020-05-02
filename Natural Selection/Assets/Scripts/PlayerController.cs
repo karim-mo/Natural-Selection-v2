@@ -108,8 +108,24 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
         {
-            updateNetworkPosition();
-            //transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
+            //updateNetworkPosition();
+            transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
+            //Vector3 dir = m_networkedPosition - transform.position;
+            //if(dir.magnitude > 3)
+            //{
+            //    transform.position = m_networkedPosition;
+            //    dir = Vector3.zero;
+            //}
+            //else if(dir.magnitude < 0.5f)
+            //{
+            //    _x = 0;
+            //    _z = 0;
+            //}
+            //else
+            //{
+            //    _x = dir.normalized.x;
+            //    _z = dir.normalized.z;
+            //}
             updateNetworkRotation();
             return;
         }
@@ -249,7 +265,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         //Vector3 extraPolatedPosition = m_networkedPosition + dir.normalized * 15 * totalTimePassed;
 
-        //Vector3 newPos = Vector3.MoveTowards(transform.position, extraPolatedPosition, 15 * Time.deltaTime);
+        //Vector3 newPos = Vector3.Lerp(transform.position, extraPolatedPosition, 15 * Time.deltaTime);
         ////Debug.Log(transform.position + " " + extraPolatedPosition);
 
         //if (Vector3.Distance(transform.position, extraPolatedPosition) > 2f)
@@ -261,8 +277,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         float time = m_timePacketSent - lastTimePacketSent;
         currTimer += Time.deltaTime;
-        transform.position = Vector3.Lerp(lastNetworkedPosition, m_networkedPosition, currTimer / time);
-
+        transform.position = Vector3.Lerp(lastNetworkedPosition, m_networkedPosition, 50 * Time.deltaTime);
     }
 
     public void updateNetworkRotation()
