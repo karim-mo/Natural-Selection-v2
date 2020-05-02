@@ -576,7 +576,7 @@ GameObject:
   - component: {fileID: 7841271121520892488}
   - component: {fileID: -2321624028608837}
   - component: {fileID: -5705025104936605093}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Swat
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -782,11 +782,10 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 3
+  Synchronization: 2
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: -5705025104936605093}
-  - {fileID: 7841271121520892488}
+  - {fileID: 6910397151928813973}
   - {fileID: -2321624028608837}
   viewIdField: 0
   InstantiationId: 0
@@ -834,15 +833,6 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 2
     Name: Grounded
-  - Type: 9
-    SynchronizeType: 2
-    Name: isIdle
-  - Type: 9
-    SynchronizeType: 2
-    Name: isJumping
-  - Type: 9
-    SynchronizeType: 2
-    Name: isFalling
   - Type: 4
     SynchronizeType: 2
     Name: Rifle
@@ -850,13 +840,13 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: aimState
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: Holster
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: GrabWeapon
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: Reload
   - Type: 4
     SynchronizeType: 2

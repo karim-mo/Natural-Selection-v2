@@ -13,9 +13,20 @@ public class NetworkMgr : MonoBehaviour
 
     private void Awake()
     {
+        PhotonNetwork.SendRate = 20;
+        PhotonNetwork.SerializationRate = 20;
+        //PhotonNetwork.OfflineMode = true;
         PhotonNetwork.AutomaticallySyncScene = true;
-        GameObject player = PhotonNetwork.Instantiate(playerChar.name, spawnPoints[0].transform.position, Quaternion.identity);
-        camBase.GetComponent<CameraController>().CameraFollowObj = player.transform.GetChild(player.transform.childCount - 1).gameObject;
+        if (!PhotonNetwork.OfflineMode)
+        {
+            GameObject player = PhotonNetwork.Instantiate(playerChar.name, spawnPoints[0].transform.position, Quaternion.identity);
+            camBase.GetComponent<CameraController>().CameraFollowObj = player.transform.GetChild(player.transform.childCount - 1).gameObject;
+        }
+        else
+        {
+            GameObject player = Instantiate(playerChar, spawnPoints[0].transform.position, Quaternion.identity);
+            camBase.GetComponent<CameraController>().CameraFollowObj = player.transform.GetChild(player.transform.childCount - 1).gameObject;
+        }
     }
 
 

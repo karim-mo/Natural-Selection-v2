@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviourPun
+public class PlayerController : MonoBehaviourPun, IPunObservable
 {
     public static class States
     {
@@ -89,6 +89,12 @@ public class PlayerController : MonoBehaviourPun
 
     private RaycastHit _ground;
     private Vector3 _groundLoc;
+    private Vector3 m_networkedPosition;
+    private Vector3 lastNetworkedPosition;
+    private Quaternion m_networkedRotation;
+    private float m_timePacketSent;
+    private float lastTimePacketSent;
+    private float currTimer = 0;
     #endregion
 
     void Start()
@@ -100,7 +106,13 @@ public class PlayerController : MonoBehaviourPun
     #region Updates
     void Update()
     {
-        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+        {
+            updateNetworkPosition();
+            //transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
+            updateNetworkRotation();
+            return;
+        }
 
         statesHanlder();
 
@@ -174,7 +186,10 @@ public class PlayerController : MonoBehaviourPun
     }
     void FixedUpdate()
     {
-        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+        {
+            return;
+        }
 
         float finalSpeedX = _currSpeed * _x;
         float finalSpeedZ = _currSpeed * _z;
@@ -223,6 +238,37 @@ public class PlayerController : MonoBehaviourPun
         }
     }
     #endregion
+
+    public void updateNetworkPosition()
+    {
+        //float ping = (float)PhotonNetwork.GetPing() * 0.001f;
+        //float timeSinceLastUpdate = (float)(PhotonNetwork.Time - m_timePacketSent);
+        //float totalTimePassed = ping + timeSinceLastUpdate;
+
+        //Vector3 dir = m_networkedPosition - transform.position;
+
+        //Vector3 extraPolatedPosition = m_networkedPosition + dir.normalized * 15 * totalTimePassed;
+
+        //Vector3 newPos = Vector3.MoveTowards(transform.position, extraPolatedPosition, 15 * Time.deltaTime);
+        ////Debug.Log(transform.position + " " + extraPolatedPosition);
+
+        //if (Vector3.Distance(transform.position, extraPolatedPosition) > 2f)
+        //{
+        //    newPos = extraPolatedPosition;
+        //}
+
+        //transform.position = newPos;
+
+        float time = m_timePacketSent - lastTimePacketSent;
+        currTimer += Time.deltaTime;
+        transform.position = Vector3.Lerp(lastNetworkedPosition, m_networkedPosition, currTimer / time);
+
+    }
+
+    public void updateNetworkRotation()
+    {
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, m_networkedRotation, 180 * Time.deltaTime);
+    }
 
     public bool checkDecrease()
     {
@@ -597,5 +643,27 @@ public class PlayerController : MonoBehaviourPun
         Reloading.Reloaded = false;
         weapon.Reload();
         isReloading = false;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+            stream.SendNext(_currSpeed);
+        }
+        else
+        {
+            m_networkedPosition = (Vector3)stream.ReceiveNext();
+            m_networkedRotation = (Quaternion)stream.ReceiveNext();
+            _currSpeed = (float)stream.ReceiveNext();
+
+            currTimer = 0;
+            lastTimePacketSent = m_timePacketSent;
+            m_timePacketSent = (float)info.SentServerTime;
+            lastNetworkedPosition = transform.position;
+        }     
+        
     }
 }
