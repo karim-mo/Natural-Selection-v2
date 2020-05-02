@@ -108,28 +108,15 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
         {
+            //Debug.Log(_rb.velocity);
             //updateNetworkPosition();
-            transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
-            //Vector3 dir = m_networkedPosition - transform.position;
-            //if(dir.magnitude > 3)
-            //{
-            //    transform.position = m_networkedPosition;
-            //    dir = Vector3.zero;
-            //}
-            //else if(dir.magnitude < 0.5f)
-            //{
-            //    _x = 0;
-            //    _z = 0;
-            //}
-            //else
-            //{
-            //    _x = dir.normalized.x;
-            //    _z = dir.normalized.z;
-            //}
+            updateNetworkPosition();
+
+            
             updateNetworkRotation();
             return;
         }
-
+    
         statesHanlder();
 
         m_x = Mathf.Clamp(Input.GetAxis("Horizontal") * 2, -1, 1);
@@ -204,6 +191,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
         {
+            if (grabbingWall || isJumpDashing) return;
+
+            _rb.velocity = new Vector3(_x * _currSpeed, _rb.velocity.y, _z * _currSpeed);
+
+            Vector3 gravi = gravity * Vector3.up;
+            _rb.AddForce(-gravi * Time.fixedDeltaTime, ForceMode.Acceleration);
             return;
         }
 
@@ -255,30 +248,68 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     }
     #endregion
 
+
     public void updateNetworkPosition()
     {
-        //float ping = (float)PhotonNetwork.GetPing() * 0.001f;
-        //float timeSinceLastUpdate = (float)(PhotonNetwork.Time - m_timePacketSent);
-        //float totalTimePassed = ping + timeSinceLastUpdate;
+        if (grabbingWall || isJumpDashing)
+        {
+            transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
+            return;
+        }
 
-        //Vector3 dir = m_networkedPosition - transform.position;
+        Vector3 dir = m_networkedPosition - transform.position;
+        if (Mathf.Abs(dir.magnitude) > 5f)
+        {
+            transform.position = m_networkedPosition;
+            dir = Vector3.zero;
+            updateNetworkRotation();
+            return;
+        }
 
-        //Vector3 extraPolatedPosition = m_networkedPosition + dir.normalized * 15 * totalTimePassed;
+        //dir.y = 0;
 
-        //Vector3 newPos = Vector3.Lerp(transform.position, extraPolatedPosition, 15 * Time.deltaTime);
-        ////Debug.Log(transform.position + " " + extraPolatedPosition);
-
-        //if (Vector3.Distance(transform.position, extraPolatedPosition) > 2f)
-        //{
-        //    newPos = extraPolatedPosition;
-        //}
-
-        //transform.position = newPos;
-
-        float time = m_timePacketSent - lastTimePacketSent;
-        currTimer += Time.deltaTime;
-        transform.position = Vector3.Lerp(lastNetworkedPosition, m_networkedPosition, 50 * Time.deltaTime);
+        if (Mathf.Abs(dir.magnitude) < 0.11f)
+        {
+            _x = 0;
+            _z = 0;
+        }
+        else
+        {
+            _x = dir.normalized.x;
+            _z = dir.normalized.z;
+        }
+        jump = m_networkedPosition.y - transform.position.y > 0.2f;
+        if (jump)
+        {
+            _rb.velocity = new Vector3(_rb.velocity.x, 10.5f, _rb.velocity.z);
+            //_rb.velocity += dir.normalized.y * 10.5f;
+        }
     }
+
+    //public void updateNetworkPosition()
+    //{
+    //    //float ping = (float)PhotonNetwork.GetPing() * 0.001f;
+    //    //float timeSinceLastUpdate = (float)(PhotonNetwork.Time - m_timePacketSent);
+    //    //float totalTimePassed = ping + timeSinceLastUpdate;
+
+    //    //Vector3 dir = m_networkedPosition - transform.position;
+
+    //    //Vector3 extraPolatedPosition = m_networkedPosition + dir.normalized * 15 * totalTimePassed;
+
+    //    //Vector3 newPos = Vector3.Lerp(transform.position, extraPolatedPosition, 15 * Time.deltaTime);
+    //    //Debug.Log(transform.position + " " + extraPolatedPosition);
+
+    //    //if (Vector3.Distance(transform.position, extraPolatedPosition) > 2f)
+    //    //{
+    //    //    newPos = extraPolatedPosition;
+    //    //}
+
+    //    //transform.position = newPos;
+
+    //    //float time = m_timePacketSent - lastTimePacketSent;
+    //    //currTimer += Time.deltaTime;
+    //    //transform.position = Vector3.Lerp(lastNetworkedPosition, m_networkedPosition, PhotonNetwork.GetPing() * currTimer / time);
+    //}
 
     public void updateNetworkRotation()
     {
@@ -667,12 +698,19 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
             stream.SendNext(_currSpeed);
+            stream.SendNext(gravity);
+            stream.SendNext(grabbingWall);
+            stream.SendNext(isJumpDashing);
         }
         else
         {
             m_networkedPosition = (Vector3)stream.ReceiveNext();
             m_networkedRotation = (Quaternion)stream.ReceiveNext();
             _currSpeed = (float)stream.ReceiveNext();
+            gravity = (float)stream.ReceiveNext();
+            grabbingWall = (bool)stream.ReceiveNext();
+            isJumpDashing = (bool)stream.ReceiveNext();
+
 
             currTimer = 0;
             lastTimePacketSent = m_timePacketSent;
