@@ -4,6 +4,45 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviourPun, IPunObservable
 {
+    struct Snapshot
+    {
+        readonly Vector3 positionOnArrival;
+        readonly Vector3 velocityOnArrival;
+        readonly Vector3 reportedPosition;
+        readonly Vector3 reportedVelocity;
+        // Using floats for time works well for games that can go for hours.
+        // Switch to doubles or other formats for games expected to run persistently.
+        readonly float arrivalTime;
+        readonly float blendWindow;
+
+        public Snapshot(Vector3 currentPosition, Vector3 currentVelocity,
+                       Vector3 reportedPosition, Vector3 reportedVelocity,
+                       float blendWindow)
+        {
+            arrivalTime = Time.time;
+            positionOnArrival = currentPosition;
+            velocityOnArrival = currentVelocity;
+            this.reportedPosition = reportedPosition;
+            this.reportedVelocity = reportedVelocity;
+            this.blendWindow = blendWindow;
+        }
+
+        public Vector3 EstimatePosition(float time, out Vector3 velocity)
+        {
+            float dT = time - arrivalTime;
+            float blend = Mathf.Clamp01(dT / blendWindow);
+
+            velocity = Vector3.Lerp(velocityOnArrival, reportedVelocity, blend);
+
+            Vector3 position = Vector3.Lerp(
+                       positionOnArrival + velocity * dT,
+                       reportedPosition + reportedVelocity * dT,
+                       blend);
+
+            return position;
+        }
+    }
+
     public static class States
     {
         public const int WEAPON_UP = 0;
@@ -93,6 +132,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private Vector3 m_networkedPosition;
     private Vector3 lastNetworkedPosition;
     private Quaternion m_networkedRotation;
+    Snapshot currentSnapshot;
+
     private float m_timePacketSent;
     private float lastTimePacketSent;
     private float currTimer = 0;
@@ -100,17 +141,22 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     void Start()
     {
+        
         varsInit();
         refInit();
+        //currentSnapshot = 
     }
 
     #region Updates
     void Update()
     {
+        photonView.RPC("updateVelocity", RpcTarget.All, m_networkedPosition, _rb.velocity);
+        PhotonNetwork.SendAllOutgoingCommands();
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
         {
-            transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
-
+            //transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
+            transform.position = currentSnapshot.EstimatePosition(Time.time, out Vector3 velocity);
+            _rb.velocity = velocity;
             //Debug.Log(_rb.velocity);
             //updateNetworkPosition();
             //updateNetworkPosition();
@@ -723,6 +769,13 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if(isReloading) anim.SetTrigger("Reload");
     }
 
+    [PunRPC]
+    void updateVelocity(Vector3 v, Vector3 p)
+    {
+        if (photonView.IsMine) return;
+
+        currentSnapshot = new Snapshot(transform.position, _rb.velocity, p, v, 1 / 20f);
+    }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -746,6 +799,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             m_isGrabbingWep = (bool)stream.ReceiveNext();
             isHolsteringWep = (bool)stream.ReceiveNext();
             isReloading = (bool)stream.ReceiveNext();
+
+            
 
             //_currSpeed = (float)stream.ReceiveNext();
             //gravity = (float)stream.ReceiveNext();

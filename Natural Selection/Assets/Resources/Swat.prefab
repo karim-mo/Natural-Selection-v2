@@ -575,7 +575,6 @@ GameObject:
   - component: {fileID: -3544466916107040789}
   - component: {fileID: 7841271121520892488}
   - component: {fileID: -2321624028608837}
-  - component: {fileID: -5705025104936605093}
   m_Layer: 10
   m_Name: Swat
   m_TagString: Player
@@ -632,7 +631,7 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!136 &6910397151928813972
@@ -786,6 +785,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 6910397151928813973}
+  - {fileID: 7841271121520892488}
   - {fileID: -2321624028608837}
   viewIdField: 0
   InstantiationId: 0
@@ -840,13 +840,13 @@ MonoBehaviour:
     SynchronizeType: 1
     Name: aimState
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: Holster
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: GrabWeapon
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: Reload
   - Type: 4
     SynchronizeType: 1
@@ -864,21 +864,6 @@ MonoBehaviour:
     LayerIndex: 1
   - SynchronizeType: 0
     LayerIndex: 2
---- !u!114 &-5705025104936605093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3226623038607819109}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
 --- !u!1 &3242295177667589376
 GameObject:
   m_ObjectHideFlags: 0
