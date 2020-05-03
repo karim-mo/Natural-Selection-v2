@@ -822,7 +822,7 @@ MonoBehaviour:
   ShowParameterInspector: 1
   m_SynchronizeParameters:
   - Type: 3
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: state
   - Type: 1
     SynchronizeType: 2
@@ -831,31 +831,31 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: VelZ
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: Grounded
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: Rifle
   - Type: 3
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: aimState
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Holster
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: GrabWeapon
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: Reload
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: isGroundDashing
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: isJumpDashing
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: WallSlide
   m_SynchronizeLayers:
   - SynchronizeType: 2

@@ -73,6 +73,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private bool rifleUp;
     private bool canShoot;
     private bool isGrabbingWep;
+    private bool m_isGrabbingWep;
     private bool isHolsteringWep;
     private bool isCrouching;
     private bool m_xDecreased;
@@ -113,8 +114,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             //Debug.Log(_rb.velocity);
             //updateNetworkPosition();
             //updateNetworkPosition();
-
-
+            //Debug.Log(GrabWeaponBehaviour.isRifleUp);
+            updateNetworkAnims();
             updateNetworkRotation();
             return;
         }
@@ -193,20 +194,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (!photonView.IsMine && PhotonNetwork.IsConnected)
         {
-            //if (grabbingWall) return;
-
-            //_rb.velocity = new Vector3(_x * _currSpeed, _rb.velocity.y, _z * _currSpeed);
-
-            //if (!isJumpDashing)
-            //{
-            //    Vector3 gravi = gravity * Vector3.up;
-            //    _rb.AddForce(-gravi * Time.fixedDeltaTime, ForceMode.Acceleration);
-
-            //}
-            //else
-            //{
-            //    _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
-            //}
+            
             return;
         }
 
@@ -259,74 +247,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     #endregion
 
 
-    public void updateNetworkPosition()
-    {
-        if (grabbingWall)
-        {
-            transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
-            return;
-        }
 
-        Vector3 dir = m_networkedPosition - transform.position;
-        if (Mathf.Abs(dir.magnitude) > 5f)
-        {
-            transform.position = m_networkedPosition;
-            dir = Vector3.zero;
-            updateNetworkRotation();
-            return;
-        }
-
-        //dir.y = 0;
-
-        if (Mathf.Abs(dir.magnitude) < 0.02f)
-        {
-            _x = 0;
-            _z = 0;
-        }
-        else
-        {
-            _x = dir.normalized.x;
-            _z = dir.normalized.z;
-        }
-        jump = m_networkedPosition.y - transform.position.y > 0.2f;
-        _rb.velocity = new Vector3(_rb.velocity.x, dir.normalized.y * 7, _rb.velocity.z);
-
-        if (jump)
-        {
-            _rb.velocity = new Vector3(_rb.velocity.x, 10.5f, _rb.velocity.z);
-            //_rb.velocity += dir.normalized.y * 10.5f;
-        }
-    }
-
-    //public void updateNetworkPosition()
-    //{
-    //    //float ping = (float)PhotonNetwork.GetPing() * 0.001f;
-    //    //float timeSinceLastUpdate = (float)(PhotonNetwork.Time - m_timePacketSent);
-    //    //float totalTimePassed = ping + timeSinceLastUpdate;
-
-    //    //Vector3 dir = m_networkedPosition - transform.position;
-
-    //    //Vector3 extraPolatedPosition = m_networkedPosition + dir.normalized * 15 * totalTimePassed;
-
-    //    //Vector3 newPos = Vector3.Lerp(transform.position, extraPolatedPosition, 15 * Time.deltaTime);
-    //    //Debug.Log(transform.position + " " + extraPolatedPosition);
-
-    //    //if (Vector3.Distance(transform.position, extraPolatedPosition) > 2f)
-    //    //{
-    //    //    newPos = extraPolatedPosition;
-    //    //}
-
-    //    //transform.position = newPos;
-
-    //    //float time = m_timePacketSent - lastTimePacketSent;
-    //    //currTimer += Time.deltaTime;
-    //    //transform.position = Vector3.Lerp(lastNetworkedPosition, m_networkedPosition, PhotonNetwork.GetPing() * currTimer / time);
-    //}
-
-    public void updateNetworkRotation()
-    {
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, m_networkedRotation, 180 * Time.deltaTime);
-    }
 
     public bool checkDecrease()
     {
@@ -666,26 +587,30 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
         else
         {
+            isHolsteringWep = true;
             anim.SetTrigger("Holster");
             anim.SetInteger("aimState", 0);
             while (HolsterBehaviour.isRifleUp)
             {
                 yield return null;
             }
+            isHolsteringWep = false;
             HolsterBehaviour.isRifleUp = true;
             weapon.Detach(weapon.prevWeapon.go, weapon.prevWeapon);
             weapon.Attach(weapon.currWeapon.go, weapon.currWeapon);
         }
+        m_isGrabbingWep = true;
         anim.SetTrigger("GrabWeapon");
         while (!GrabWeaponBehaviour.isRifleUp)
         {
             yield return null;
         }
+        m_isGrabbingWep = false;
         rifleUp = true;
         GrabWeaponBehaviour.isRifleUp = false;
         anim.SetInteger("aimState", 1);
         canShoot = true;
-        isGrabbingWep = false;
+        isGrabbingWep = false;      
     }
 
     IEnumerator Reload()
@@ -703,31 +628,135 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         isReloading = false;
     }
 
+
+    public void updateNetworkPosition()
+    {
+        if (grabbingWall)
+        {
+            transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
+            return;
+        }
+
+        Vector3 dir = m_networkedPosition - transform.position;
+        if (Mathf.Abs(dir.magnitude) > 5f)
+        {
+            transform.position = m_networkedPosition;
+            dir = Vector3.zero;
+            updateNetworkRotation();
+            return;
+        }
+
+        //dir.y = 0;
+
+        if (Mathf.Abs(dir.magnitude) < 0.02f)
+        {
+            _x = 0;
+            _z = 0;
+        }
+        else
+        {
+            _x = dir.normalized.x;
+            _z = dir.normalized.z;
+        }
+        jump = m_networkedPosition.y - transform.position.y > 0.2f;
+        _rb.velocity = new Vector3(_rb.velocity.x, dir.normalized.y * 7, _rb.velocity.z);
+
+        if (jump)
+        {
+            _rb.velocity = new Vector3(_rb.velocity.x, 10.5f, _rb.velocity.z);
+            //_rb.velocity += dir.normalized.y * 10.5f;
+        }
+    }
+
+    //public void updateNetworkPosition()
+    //{
+    //    //float ping = (float)PhotonNetwork.GetPing() * 0.001f;
+    //    //float timeSinceLastUpdate = (float)(PhotonNetwork.Time - m_timePacketSent);
+    //    //float totalTimePassed = ping + timeSinceLastUpdate;
+
+    //    //Vector3 dir = m_networkedPosition - transform.position;
+
+    //    //Vector3 extraPolatedPosition = m_networkedPosition + dir.normalized * 15 * totalTimePassed;
+
+    //    //Vector3 newPos = Vector3.Lerp(transform.position, extraPolatedPosition, 15 * Time.deltaTime);
+    //    //Debug.Log(transform.position + " " + extraPolatedPosition);
+
+    //    //if (Vector3.Distance(transform.position, extraPolatedPosition) > 2f)
+    //    //{
+    //    //    newPos = extraPolatedPosition;
+    //    //}
+
+    //    //transform.position = newPos;
+
+    //    //float time = m_timePacketSent - lastTimePacketSent;
+    //    //currTimer += Time.deltaTime;
+    //    //transform.position = Vector3.Lerp(lastNetworkedPosition, m_networkedPosition, PhotonNetwork.GetPing() * currTimer / time);
+    //}
+
+    public void updateNetworkRotation()
+    {
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, m_networkedRotation, 180 * Time.deltaTime);
+    }
+
+    public void fixedUpdateNetworkPosition()
+    {
+        //if (grabbingWall) return;
+
+        //_rb.velocity = new Vector3(_x * _currSpeed, _rb.velocity.y, _z * _currSpeed);
+
+        //if (!isJumpDashing)
+        //{
+        //    Vector3 gravi = gravity * Vector3.up;
+        //    _rb.AddForce(-gravi * Time.fixedDeltaTime, ForceMode.Acceleration);
+
+        //}
+        //else
+        //{
+        //    _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
+        //}
+    }
+
+    public void updateNetworkAnims()
+    {
+        if(m_isGrabbingWep) anim.SetTrigger("GrabWeapon");
+        if(isHolsteringWep) anim.SetTrigger("Holster");
+        if(isReloading) anim.SetTrigger("Reload");
+    }
+
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
-            stream.SendNext(_currSpeed);
-            stream.SendNext(gravity);
-            stream.SendNext(grabbingWall);
-            stream.SendNext(isJumpDashing);
+            stream.SendNext(m_isGrabbingWep);
+            stream.SendNext(isHolsteringWep);
+            stream.SendNext(isReloading);
+
+            //stream.SendNext(_currSpeed);
+            //stream.SendNext(gravity);
+            //stream.SendNext(grabbingWall);
+            //stream.SendNext(isJumpDashing);
         }
         else
         {
             m_networkedPosition = (Vector3)stream.ReceiveNext();
             m_networkedRotation = (Quaternion)stream.ReceiveNext();
-            _currSpeed = (float)stream.ReceiveNext();
-            gravity = (float)stream.ReceiveNext();
-            grabbingWall = (bool)stream.ReceiveNext();
-            isJumpDashing = (bool)stream.ReceiveNext();
+            m_isGrabbingWep = (bool)stream.ReceiveNext();
+            isHolsteringWep = (bool)stream.ReceiveNext();
+            isReloading = (bool)stream.ReceiveNext();
+
+            //_currSpeed = (float)stream.ReceiveNext();
+            //gravity = (float)stream.ReceiveNext();
+            //grabbingWall = (bool)stream.ReceiveNext();
+            //isJumpDashing = (bool)stream.ReceiveNext();
 
 
-            currTimer = 0;
-            lastTimePacketSent = m_timePacketSent;
-            m_timePacketSent = (float)info.SentServerTime;
-            lastNetworkedPosition = transform.position;
+            //currTimer = 0;
+            //lastTimePacketSent = m_timePacketSent;
+            //m_timePacketSent = (float)info.SentServerTime;
+            //lastNetworkedPosition = transform.position;
         }     
         
     }
