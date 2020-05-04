@@ -210,7 +210,16 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     private void LateUpdate()
     {
-        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+        if (!photonView.IsMine && PhotonNetwork.IsConnected)
+        {
+            if (currState != States.WEAPON_UP) return;
+
+            Transform _chest = anim.GetBoneTransform(HumanBodyBones.Chest);
+            //_chest.rotation = Quaternion.RotateTowards(_chest.rotation, Quaternion.LookRotation((targetPos - transform.position).normalized), 180 * Time.deltaTime);
+            _chest.LookAt(targetPos);
+            _chest.Rotate(10, 45, 0, Space.Self);
+            return;
+        }
 
         // Assuming marwan doesnt make the animation
         if (currState != States.WEAPON_UP) return;
@@ -672,9 +681,13 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
-            stream.SendNext(m_isGrabbingWep);
-            stream.SendNext(isHolsteringWep);
-            stream.SendNext(isReloading);
+            stream.SendNext(targetPos);
+            stream.SendNext(currState);
+
+            //stream.SendNext(m_isGrabbingWep);
+            //stream.SendNext(isHolsteringWep);
+            //stream.SendNext(isReloading);
+            
             //stream.SendNext(_rb.velocity);
 
             //stream.SendNext(_currSpeed);
@@ -686,10 +699,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             networkedPlayer.m_networkedPosition = (Vector3)stream.ReceiveNext();
             networkedPlayer.m_networkedRotation = (Quaternion)stream.ReceiveNext();
+            targetPos = (Vector3)stream.ReceiveNext();
+            currState = (int)stream.ReceiveNext();
 
-            m_isGrabbingWep = (bool)stream.ReceiveNext();
-            isHolsteringWep = (bool)stream.ReceiveNext();
-            isReloading = (bool)stream.ReceiveNext();
+            //m_isGrabbingWep = (bool)stream.ReceiveNext();
+            //isHolsteringWep = (bool)stream.ReceiveNext();
+            //isReloading = (bool)stream.ReceiveNext();
             //m_networkedVelocity = (Vector3)stream.ReceiveNext();
 
             //photonView.RPC("updateVelocity", RpcTarget.All, m_networkedPosition, _rb.velocity);

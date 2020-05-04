@@ -165,7 +165,8 @@ public class NetworkController : MonoBehaviourPun
 
     public void updateNetworkRotation()
     {
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, m_networkedRotation, 180 * Time.deltaTime);
+        //transform.rotation = Quaternion.RotateTowards(transform.rotation, m_networkedRotation, 180 * Time.deltaTime);
+        transform.rotation = m_networkedRotation;
     }
 
     public void fixedUpdateNetworkPosition()
