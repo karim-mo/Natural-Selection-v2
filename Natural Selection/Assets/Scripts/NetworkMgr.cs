@@ -19,7 +19,7 @@ public class NetworkMgr : MonoBehaviour
         PhotonNetwork.AutomaticallySyncScene = true;
         if (!PhotonNetwork.OfflineMode)
         {
-            GameObject player = PhotonNetwork.Instantiate(playerChar.name, spawnPoints[0].transform.position, Quaternion.identity);
+            GameObject player = PhotonNetwork.Instantiate(playerChar.name, spawnPoints[Random.Range(0, 1000 + 1) % spawnPoints.Length].transform.position, Quaternion.identity);
             camBase.GetComponent<CameraController>().CameraFollowObj = player.transform.GetChild(player.transform.childCount - 1).gameObject;
         }
         else

@@ -4,45 +4,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviourPun, IPunObservable
 {
-    struct Snapshot
-    {
-        readonly Vector3 positionOnArrival;
-        readonly Vector3 velocityOnArrival;
-        readonly Vector3 reportedPosition;
-        readonly Vector3 reportedVelocity;
-        // Using floats for time works well for games that can go for hours.
-        // Switch to doubles or other formats for games expected to run persistently.
-        readonly float arrivalTime;
-        readonly float blendWindow;
-
-        public Snapshot(Vector3 currentPosition, Vector3 currentVelocity,
-                       Vector3 reportedPosition, Vector3 reportedVelocity,
-                       float blendWindow)
-        {
-            arrivalTime = Time.time;
-            positionOnArrival = currentPosition;
-            velocityOnArrival = currentVelocity;
-            this.reportedPosition = reportedPosition;
-            this.reportedVelocity = reportedVelocity;
-            this.blendWindow = blendWindow;
-        }
-
-        public Vector3 EstimatePosition(float time, out Vector3 velocity)
-        {
-            float dT = time - arrivalTime;
-            float blend = Mathf.Clamp01(dT / blendWindow);
-
-            velocity = Vector3.Lerp(velocityOnArrival, reportedVelocity, blend);
-
-            Vector3 position = Vector3.Lerp(
-                       positionOnArrival + velocity * dT,
-                       reportedPosition + reportedVelocity * dT,
-                       blend);
-
-            return position;
-        }
-    }
-
     public static class States
     {
         public const int WEAPON_UP = 0;
@@ -94,6 +55,16 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public Camera cam;
     [HideInInspector]
     public Vector3 targetPos;
+    [HideInInspector]
+    public bool m_isGrabbingWep;
+    [HideInInspector]
+    public bool isHolsteringWep;
+    [HideInInspector]
+    public bool H_isRifleUp;
+    [HideInInspector]
+    public bool G_isRifleUp;
+    [HideInInspector]
+    public bool R_reloaded;
     #endregion
 
 
@@ -112,8 +83,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private bool rifleUp;
     private bool canShoot;
     private bool isGrabbingWep;
-    private bool m_isGrabbingWep;
-    private bool isHolsteringWep;
     private bool isCrouching;
     private bool m_xDecreased;
     private bool isGroundDashing;
@@ -125,23 +94,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private Animator anim;
     private CapsuleCollider col;
     private ShootingHandling weapon;
+    private NetworkController networkedPlayer;
     private StaminaHandling stamina;
-
-    private RaycastHit _ground;
-    private Vector3 _groundLoc;
-    private Vector3 m_networkedPosition;
-    private Vector3 lastNetworkedPosition;
-    private Quaternion m_networkedRotation;
-    Snapshot currentSnapshot;
-
-    private float m_timePacketSent;
-    private float lastTimePacketSent;
-    private float currTimer = 0;
     #endregion
 
     void Start()
-    {
-        
+    {       
         varsInit();
         refInit();
         //currentSnapshot = 
@@ -150,22 +108,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     #region Updates
     void Update()
     {
-        photonView.RPC("updateVelocity", RpcTarget.All, m_networkedPosition, _rb.velocity);
-        PhotonNetwork.SendAllOutgoingCommands();
-        if (!photonView.IsMine && PhotonNetwork.IsConnected)
-        {
-            //transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
-            transform.position = currentSnapshot.EstimatePosition(Time.time, out Vector3 velocity);
-            _rb.velocity = velocity;
-            //Debug.Log(_rb.velocity);
-            //updateNetworkPosition();
-            //updateNetworkPosition();
-            //Debug.Log(GrabWeaponBehaviour.isRifleUp);
-            updateNetworkAnims();
-            updateNetworkRotation();
-            return;
-        }
-    
+        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+
         statesHanlder();
 
         m_x = Mathf.Clamp(Input.GetAxis("Horizontal") * 2, -1, 1);
@@ -238,11 +182,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     }
     void FixedUpdate()
     {
-        if (!photonView.IsMine && PhotonNetwork.IsConnected)
-        {
-            
-            return;
-        }
+        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+
 
         float finalSpeedX = _currSpeed * _x;
         float finalSpeedZ = _currSpeed * _z;
@@ -489,6 +430,9 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         isCrouching = false;
         grabbingWall = false;
         Aim = false;
+        H_isRifleUp = true;
+        G_isRifleUp = false;
+        R_reloaded = false;
         gravity = normalGravity;
     }
 
@@ -500,6 +444,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         cam = camBase.gameObject.transform.GetChild(0).gameObject.GetComponent<Camera>();
         col = GetComponent<CapsuleCollider>();
         weapon = GetComponent<ShootingHandling>();
+        networkedPlayer = GetComponent<NetworkController>();
     }
 
     public void handleRotation()
@@ -564,14 +509,22 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
                 weapon.prevWeapon = weapon.currWeapons[0];
                 return;
             }
-            if (weapon.currWeapon.go == null) weapon.currWeapon.go = Instantiate(weapon.currWeapon.prefab);
+            if (weapon.currWeapon.go == null) weapon.currWeapon.go = 
+                    PhotonNetwork.Instantiate(weapon.currWeapon.prefab.name, 
+                    weapon.currWeapon.prefab.transform.position, 
+                    weapon.currWeapon.prefab.transform.rotation
+                    );
             StartCoroutine("GrabWeapon");
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2) && currState == States.WEAPON_DOWN && !isReloading && !isHolsteringWep && !isGrabbingWep)
         {
             weapon.currWeapon = weapon.currWeapons[1];
-            if(weapon.currWeapon.go == null) weapon.currWeapon.go = Instantiate(weapon.currWeapon.prefab);
+            if (weapon.currWeapon.go == null) weapon.currWeapon.go =
+                    PhotonNetwork.Instantiate(weapon.currWeapon.prefab.name,
+                    weapon.currWeapon.prefab.transform.position,
+                    weapon.currWeapon.prefab.transform.rotation
+                    );
             StartCoroutine("GrabWeapon");
         }
 
@@ -607,18 +560,20 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         canShoot = false;
         isHolsteringWep = true;
         anim.SetTrigger("Holster");
+        photonView.RPC("sendTrigger", RpcTarget.Others, "Holster", photonView.ViewID);
+        PhotonNetwork.SendAllOutgoingCommands();
         anim.SetInteger("aimState", 0);
-        while (HolsterBehaviour.isRifleUp)
+        while (H_isRifleUp)
         {
             yield return null;
         }
         weapon.currWeapon = weapon.currWeapons[1];
-        Destroy(weapon.currWeapon.go);
+        PhotonNetwork.Destroy(weapon.currWeapon.go);
         weapon.currWeapon = weapon.currWeapons[0];
         weapon.Detach(weapon.currWeapon.go, weapon.currWeapon);
         weapon.currWeapon = null;
         rifleUp = false;
-        HolsterBehaviour.isRifleUp = true;
+        H_isRifleUp = true;
         anim.SetLayerWeight(1, 0);
         isHolsteringWep = false;
     }
@@ -635,25 +590,29 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             isHolsteringWep = true;
             anim.SetTrigger("Holster");
+            photonView.RPC("sendTrigger", RpcTarget.Others, "Holster", photonView.ViewID);
+            PhotonNetwork.SendAllOutgoingCommands();
             anim.SetInteger("aimState", 0);
-            while (HolsterBehaviour.isRifleUp)
+            while (H_isRifleUp)
             {
                 yield return null;
             }
             isHolsteringWep = false;
-            HolsterBehaviour.isRifleUp = true;
+            H_isRifleUp = true;
             weapon.Detach(weapon.prevWeapon.go, weapon.prevWeapon);
             weapon.Attach(weapon.currWeapon.go, weapon.currWeapon);
         }
         m_isGrabbingWep = true;
         anim.SetTrigger("GrabWeapon");
-        while (!GrabWeaponBehaviour.isRifleUp)
+        photonView.RPC("sendTrigger", RpcTarget.Others, "GrabWeapon", photonView.ViewID);
+        PhotonNetwork.SendAllOutgoingCommands();
+        while (!G_isRifleUp)
         {
             yield return null;
         }
         m_isGrabbingWep = false;
         rifleUp = true;
-        GrabWeaponBehaviour.isRifleUp = false;
+        G_isRifleUp = false;
         anim.SetInteger("aimState", 1);
         canShoot = true;
         isGrabbingWep = false;      
@@ -664,117 +623,47 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         isReloading = true;
         canShoot = false;
         anim.SetTrigger("Reload");
-        while (!Reloading.Reloaded)
+        photonView.RPC("sendTrigger", RpcTarget.Others, "Reload", photonView.ViewID);
+        PhotonNetwork.SendAllOutgoingCommands();
+        while (!R_reloaded)
         {
             yield return null;
         }
         canShoot = true;
-        Reloading.Reloaded = false;
+        R_reloaded = false;
         weapon.Reload();
         isReloading = false;
     }
 
-
-    public void updateNetworkPosition()
+    IEnumerator Death()
     {
-        if (grabbingWall)
-        {
-            transform.position = Vector3.Slerp(transform.position, m_networkedPosition, 15 * Time.deltaTime);
-            return;
-        }
-
-        Vector3 dir = m_networkedPosition - transform.position;
-        if (Mathf.Abs(dir.magnitude) > 5f)
-        {
-            transform.position = m_networkedPosition;
-            dir = Vector3.zero;
-            updateNetworkRotation();
-            return;
-        }
-
-        //dir.y = 0;
-
-        if (Mathf.Abs(dir.magnitude) < 0.02f)
-        {
-            _x = 0;
-            _z = 0;
-        }
-        else
-        {
-            _x = dir.normalized.x;
-            _z = dir.normalized.z;
-        }
-        jump = m_networkedPosition.y - transform.position.y > 0.2f;
-        _rb.velocity = new Vector3(_rb.velocity.x, dir.normalized.y * 7, _rb.velocity.z);
-
-        if (jump)
-        {
-            _rb.velocity = new Vector3(_rb.velocity.x, 10.5f, _rb.velocity.z);
-            //_rb.velocity += dir.normalized.y * 10.5f;
-        }
-    }
-
-    //public void updateNetworkPosition()
-    //{
-    //    //float ping = (float)PhotonNetwork.GetPing() * 0.001f;
-    //    //float timeSinceLastUpdate = (float)(PhotonNetwork.Time - m_timePacketSent);
-    //    //float totalTimePassed = ping + timeSinceLastUpdate;
-
-    //    //Vector3 dir = m_networkedPosition - transform.position;
-
-    //    //Vector3 extraPolatedPosition = m_networkedPosition + dir.normalized * 15 * totalTimePassed;
-
-    //    //Vector3 newPos = Vector3.Lerp(transform.position, extraPolatedPosition, 15 * Time.deltaTime);
-    //    //Debug.Log(transform.position + " " + extraPolatedPosition);
-
-    //    //if (Vector3.Distance(transform.position, extraPolatedPosition) > 2f)
-    //    //{
-    //    //    newPos = extraPolatedPosition;
-    //    //}
-
-    //    //transform.position = newPos;
-
-    //    //float time = m_timePacketSent - lastTimePacketSent;
-    //    //currTimer += Time.deltaTime;
-    //    //transform.position = Vector3.Lerp(lastNetworkedPosition, m_networkedPosition, PhotonNetwork.GetPing() * currTimer / time);
-    //}
-
-    public void updateNetworkRotation()
-    {
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, m_networkedRotation, 180 * Time.deltaTime);
-    }
-
-    public void fixedUpdateNetworkPosition()
-    {
-        //if (grabbingWall) return;
-
-        //_rb.velocity = new Vector3(_x * _currSpeed, _rb.velocity.y, _z * _currSpeed);
-
-        //if (!isJumpDashing)
-        //{
-        //    Vector3 gravi = gravity * Vector3.up;
-        //    _rb.AddForce(-gravi * Time.fixedDeltaTime, ForceMode.Acceleration);
-
-        //}
-        //else
-        //{
-        //    _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
-        //}
-    }
-
-    public void updateNetworkAnims()
-    {
-        if(m_isGrabbingWep) anim.SetTrigger("GrabWeapon");
-        if(isHolsteringWep) anim.SetTrigger("Holster");
-        if(isReloading) anim.SetTrigger("Reload");
+        yield return null;
     }
 
     [PunRPC]
-    void updateVelocity(Vector3 v, Vector3 p)
+    public void sendTrigger(string trigger, int pID)
     {
-        if (photonView.IsMine) return;
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach(GameObject player in players)
+        {
+            if(player.GetComponent<PhotonView>().ViewID == pID)
+            {
+                player.GetComponent<Animator>().SetTrigger(trigger);
+                return;
+            }
+        }
+    }
+    //[PunRPC]
+    //void updateVelocity(Vector3 v, Vector3 p)
+    //{
+    //    if (photonView.IsMine) return;
 
-        currentSnapshot = new Snapshot(transform.position, _rb.velocity, p, v, 1 / 20f);
+    //    currentSnapshot = new Snapshot(transform.position, _rb.velocity, p, v, 1 / 20f);
+    //}
+
+    public bool isMine()
+    {
+        return photonView.IsMine;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -786,6 +675,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             stream.SendNext(m_isGrabbingWep);
             stream.SendNext(isHolsteringWep);
             stream.SendNext(isReloading);
+            //stream.SendNext(_rb.velocity);
 
             //stream.SendNext(_currSpeed);
             //stream.SendNext(gravity);
@@ -794,13 +684,16 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
         else
         {
-            m_networkedPosition = (Vector3)stream.ReceiveNext();
-            m_networkedRotation = (Quaternion)stream.ReceiveNext();
+            networkedPlayer.m_networkedPosition = (Vector3)stream.ReceiveNext();
+            networkedPlayer.m_networkedRotation = (Quaternion)stream.ReceiveNext();
+
             m_isGrabbingWep = (bool)stream.ReceiveNext();
             isHolsteringWep = (bool)stream.ReceiveNext();
             isReloading = (bool)stream.ReceiveNext();
+            //m_networkedVelocity = (Vector3)stream.ReceiveNext();
 
-            
+            //photonView.RPC("updateVelocity", RpcTarget.All, m_networkedPosition, _rb.velocity);
+            //PhotonNetwork.SendAllOutgoingCommands();
 
             //_currSpeed = (float)stream.ReceiveNext();
             //gravity = (float)stream.ReceiveNext();

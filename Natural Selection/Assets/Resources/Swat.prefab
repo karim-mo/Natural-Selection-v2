@@ -572,6 +572,7 @@ GameObject:
   - component: {fileID: 6910397151928813973}
   - component: {fileID: 5520013390022163975}
   - component: {fileID: 8566382339398538046}
+  - component: {fileID: 1377338617201780043}
   - component: {fileID: -3544466916107040789}
   - component: {fileID: 7841271121520892488}
   - component: {fileID: -2321624028608837}
@@ -684,6 +685,11 @@ MonoBehaviour:
   isReloading: 0
   cam: {fileID: 0}
   targetPos: {x: 0, y: 0, z: 0}
+  m_isGrabbingWep: 0
+  isHolsteringWep: 0
+  H_isRifleUp: 0
+  G_isRifleUp: 0
+  R_reloaded: 0
 --- !u!114 &5520013390022163975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -766,6 +772,25 @@ MonoBehaviour:
   staminaMaxRechargeSpeed: 0
   currState: 0
   staminaBar: {fileID: 0}
+--- !u!114 &1377338617201780043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3226623038607819109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 117aebce9df2d034b84000d7c7d84de5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_networkedPosition: {x: 0, y: 0, z: 0}
+  lastNetworkedPosition: {x: 0, y: 0, z: 0}
+  m_networkedVelocity: {x: 0, y: 0, z: 0}
+  m_networkedRotation: {x: 0, y: 0, z: 0, w: 0}
+  m_timePacketSent: 0
+  lastTimePacketSent: 0
+  currTimer: 0
 --- !u!114 &-3544466916107040789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -785,7 +810,6 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 6910397151928813973}
-  - {fileID: 7841271121520892488}
   - {fileID: -2321624028608837}
   viewIdField: 0
   InstantiationId: 0

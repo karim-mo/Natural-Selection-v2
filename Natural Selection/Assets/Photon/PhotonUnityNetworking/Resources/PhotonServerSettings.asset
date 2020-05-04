@@ -31,12 +31,16 @@ MonoBehaviour:
   RunInBackground: 1
   StartInOfflineMode: 0
   RpcList:
+  - updateVelocity
+  - SetWeaponParent
   - ClickRpc
   - DestroyRpc
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
-  - updateVelocity
+  - SetWeaponHandParent
+  - SetWeaponSpineParent
+  - sendTrigger
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

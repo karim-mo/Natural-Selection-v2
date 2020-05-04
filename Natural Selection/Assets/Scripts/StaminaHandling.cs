@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class StaminaHandling : MonoBehaviour
+public class StaminaHandling : MonoBehaviourPun
 {
     public class States
     {
@@ -31,7 +32,8 @@ public class StaminaHandling : MonoBehaviour
 
     void Update()
     {
-        
+        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+
     }
 
     public bool canUseStamina()

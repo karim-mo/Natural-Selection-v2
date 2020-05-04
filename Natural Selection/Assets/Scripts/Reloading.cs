@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Reloading : StateMachineBehaviour
 {
-    public static bool Reloaded = false;
+    //public static bool Reloaded = false;
+
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Reloaded = true;
+        PlayerController player = animator.GetComponent<PlayerController>();
+        player.R_reloaded = true;
     }
 
 }

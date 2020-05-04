@@ -10144,6 +10144,7 @@ GameObject:
   - component: {fileID: 1817691287}
   - component: {fileID: 1817691288}
   - component: {fileID: 1817691289}
+  - component: {fileID: 1817691290}
   m_Layer: 0
   m_Name: GM
   m_TagString: Untagged
@@ -10350,6 +10351,14 @@ MonoBehaviour:
     type: 3}
   spawnPoints:
   - {fileID: 210735165}
+  - {fileID: 1935167112}
+  - {fileID: 1996520559}
+  - {fileID: 6856872}
+  - {fileID: 1463824504}
+  - {fileID: 1379130053}
+  - {fileID: 250416438}
+  - {fileID: 1354332030}
+  - {fileID: 2074851131}
 --- !u!114 &1817691289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10370,6 +10379,28 @@ MonoBehaviour:
     height: 100
   WindowId: 101
   Visible: 1
+--- !u!114 &1817691290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1817691283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 0
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 0}
+  viewIdField: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1935167112
 GameObject:
   m_ObjectHideFlags: 0

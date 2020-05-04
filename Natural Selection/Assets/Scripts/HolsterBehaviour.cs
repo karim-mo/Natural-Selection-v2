@@ -5,15 +5,17 @@ using Photon.Pun;
 public class HolsterBehaviour : StateMachineBehaviour
 {
 
-    public static bool isRifleUp = true;
+    //public static bool isRifleUp = true;   
+    
+    
 
-    
-    
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
-        isRifleUp = false;
+        PlayerController player = animator.GetComponent<PlayerController>();
+        player.H_isRifleUp = false;
         Debug.Log("Holstered Rifle!");
     }
+
+     
 
 }

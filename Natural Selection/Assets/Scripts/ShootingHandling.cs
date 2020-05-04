@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Timeline;
+using Photon.Pun;
 
-public class ShootingHandling : MonoBehaviour
+public class ShootingHandling : MonoBehaviourPun
 {
     [Header("Weapon Attach Locations")]
     public Transform rightHand;
@@ -38,6 +39,8 @@ public class ShootingHandling : MonoBehaviour
 
     void Start()
     {
+        if (!photonView.IsMine) return;
+
         player = GetComponent<PlayerController>();
         aimOffset = Vector3.zero;
         currWeapons = new List<WeaponDB.Weapons>();
@@ -48,20 +51,21 @@ public class ShootingHandling : MonoBehaviour
         currWeapons[1].currBullets = currWeapons[1].bullets;
         currWeapons[1].currReserve = currWeapons[1].reserve;
         currWeapon = currWeapons[0];
-        currWeapon.go = Instantiate(currWeapon.prefab);
+        currWeapon.go = PhotonNetwork.Instantiate(currWeapon.prefab.name, currWeapon.prefab.transform.position, currWeapon.prefab.transform.rotation);
         Detach(currWeapon.go, currWeapon);
         currWeapon = null;
     }
 
     void Update()
     {
+        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+
         if (currWeapon == null) return;
 
         if(currWeapon.currBullets <= 0 && currWeapon.currReserve > 0)
         {
             player.m_Reload();
         }
-
         Recoil(player.targetPos);
     }
 
@@ -78,7 +82,7 @@ public class ShootingHandling : MonoBehaviour
             RaycastHit hit;
             Physics.Raycast(ray, out hit, range);
             Debug.DrawRay(ray.origin, ray.direction * range, Color.cyan);
-            if (hit.collider != null && !hit.collider.CompareTag("Player"))
+            if (hit.collider != null && !hit.collider.CompareTag("Player") && !hit.collider.CompareTag("Weapon"))
             {
                 GameObject go = Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
                 Destroy(go, 10f);
@@ -97,6 +101,18 @@ public class ShootingHandling : MonoBehaviour
         weapon.transform.SetParent(rightHand, false);
         weapon.transform.localPosition = refWeapon.handPos;
         weapon.transform.localEulerAngles = refWeapon.handRot;
+
+        int pID = photonView.ViewID;
+
+        photonView.RPC("SetWeaponHandParent", 
+            RpcTarget.Others, 
+            pID, 
+            weapon.GetComponent<PhotonView>().ViewID,
+            refWeapon.handPos,
+            refWeapon.handRot,
+            weapon.transform.localScale
+            );
+        PhotonNetwork.SendAllOutgoingCommands();
     }
 
     public void Detach(GameObject weapon, WeaponDB.Weapons refWeapon)
@@ -104,6 +120,18 @@ public class ShootingHandling : MonoBehaviour
         weapon.transform.SetParent(Spine, false);
         weapon.transform.localPosition = refWeapon.spinePos;
         weapon.transform.localEulerAngles = refWeapon.spineRot;
+
+        int pID = photonView.ViewID;
+
+        photonView.RPC("SetWeaponSpineParent",
+            RpcTarget.Others,
+            pID,
+            weapon.GetComponent<PhotonView>().ViewID,
+            refWeapon.spinePos,
+            refWeapon.spineRot,
+            weapon.transform.localScale
+            );
+        PhotonNetwork.SendAllOutgoingCommands();
     }
 
     public void Reload()
@@ -182,4 +210,59 @@ public class ShootingHandling : MonoBehaviour
         }
     }
 
+    [PunRPC]
+    public void SetWeaponHandParent(int pViewID, int wepViewID, Vector3 handPos, Vector3 handRot, Vector3 localScale)
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        foreach (GameObject p in players)
+        {
+            if (p.GetComponent<PhotonView>().ViewID == pViewID)
+            {
+                GameObject[] weapons = GameObject.FindGameObjectsWithTag("Weapon");
+
+                foreach (GameObject weapon in weapons)
+                {
+                    if (weapon.GetComponent<PhotonView>().ViewID == wepViewID)
+                    {
+                        Transform hand = p.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:RightShoulder/mixamorig:RightArm/mixamorig:RightForeArm/mixamorig:RightHand");
+                        weapon.transform.SetParent(hand, false);
+                        weapon.transform.localPosition = handPos;
+                        weapon.transform.localEulerAngles = handRot;
+                        weapon.transform.localScale = localScale;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    [PunRPC]
+    public void SetWeaponSpineParent(int pViewID, int wepViewID, Vector3 spinePos, Vector3 spineRot, Vector3 localScale)
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        foreach (GameObject p in players)
+        {
+            if (p.GetComponent<PhotonView>().ViewID == pViewID)
+            {
+                GameObject[] weapons = GameObject.FindGameObjectsWithTag("Weapon");
+
+                foreach (GameObject weapon in weapons)
+                {
+                    if (weapon.GetComponent<PhotonView>().ViewID == wepViewID)
+                    {
+                        Transform spine = p.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1");
+                        weapon.transform.SetParent(spine, false);
+                        weapon.transform.localPosition = spinePos;
+                        weapon.transform.localEulerAngles = spineRot;
+                        weapon.transform.localScale = localScale;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
 }
