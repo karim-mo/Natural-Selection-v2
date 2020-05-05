@@ -575,7 +575,7 @@ GameObject:
   - component: {fileID: 1377338617201780043}
   - component: {fileID: -3544466916107040789}
   - component: {fileID: 7841271121520892488}
-  - component: {fileID: -2321624028608837}
+  - component: {fileID: -5759679150923610487}
   m_Layer: 10
   m_Name: Swat
   m_TagString: Player
@@ -645,10 +645,10 @@ CapsuleCollider:
   m_Material: {fileID: 13400000, guid: d58f7c6d3fddce045b6ec91fee4c6b70, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.24432413
-  m_Height: 0.9044651
+  m_Radius: 0.19
+  m_Height: 1.78
   m_Direction: 1
-  m_Center: {x: -0.020363566, y: 0.44095704, z: 0}
+  m_Center: {x: -0.020363566, y: 0.9, z: 0}
 --- !u!114 &6910397151928813973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -661,6 +661,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fca3f8a47a07aa409ccbf1c96adc526, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 200
+  currHealth: 0
   aimSpeed: 2.5
   runningSpeed: 4.5
   strafeSpeed: 2.5
@@ -690,6 +692,7 @@ MonoBehaviour:
   H_isRifleUp: 0
   G_isRifleUp: 0
   R_reloaded: 0
+  D_isDead: 0
 --- !u!114 &5520013390022163975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -729,7 +732,10 @@ MonoBehaviour:
     reloadSpeed: 0
     recoilSpeed: 0
     recoilRate: 0
-    recoilStrength: 0
+    LR_recoilStrength: 0
+    MR_recoilStrength: 0
+    HR_recoilStrength: 0
+    currRecoilStrength: 0
     recoils: []
   prevWeapon:
     prefab: {fileID: 0}
@@ -751,7 +757,10 @@ MonoBehaviour:
     reloadSpeed: 0
     recoilSpeed: 0
     recoilRate: 0
-    recoilStrength: 0
+    LR_recoilStrength: 0
+    MR_recoilStrength: 0
+    HR_recoilStrength: 0
+    currRecoilStrength: 0
     recoils: []
   inShootCD: 0
   aimOffset: {x: 0, y: 0, z: 0}
@@ -810,7 +819,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 6910397151928813973}
-  - {fileID: -2321624028608837}
+  - {fileID: -5759679150923610487}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -830,7 +839,7 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 0
   m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 2
---- !u!114 &-2321624028608837
+--- !u!114 &-5759679150923610487
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -881,6 +890,9 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: WallSlide
+  - Type: 4
+    SynchronizeType: 1
+    Name: isDead
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0

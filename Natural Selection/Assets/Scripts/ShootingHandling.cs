@@ -20,7 +20,8 @@ public class ShootingHandling : MonoBehaviourPun
     public Camera cam;
 
     private PlayerController player;
-    
+    private Animator anim;
+
     private float nextFire;
     private float nextRecoil;
     private float recoilTimer;
@@ -42,6 +43,7 @@ public class ShootingHandling : MonoBehaviourPun
         if (!photonView.IsMine) return;
 
         player = GetComponent<PlayerController>();
+        anim = GetComponent<Animator>();
         aimOffset = Vector3.zero;
         currWeapons = new List<WeaponDB.Weapons>();
         currWeapons.Add(WeaponDB.instance.GetWeaponByName("M4A1"));
@@ -73,20 +75,44 @@ public class ShootingHandling : MonoBehaviourPun
     {
         if (player.fire && Time.time >= nextFire && !player.isReloading && currWeapon.currBullets > 0)
         {
+            Transform weapTransform = currWeapon.go.transform;
+            Transform rayCheck = weapTransform.GetChild(weapTransform.childCount - 2);
+            Ray shootingCheck = new Ray(rayCheck.position, rayCheck.transform.forward);
+            RaycastHit _hit;
+            Physics.Raycast(shootingCheck, out _hit, 1f);
+
+            //Debug.DrawRay(shootingCheck.origin, shootingCheck.direction * 1f, Color.yellow);
+            if(_hit.collider != null)
+            {
+                nextFire = Time.time + currWeapon.fireRate;
+                currWeapon.currBullets--;
+                return;
+            }
+
             nextRecoil = Time.time + currWeapon.recoilRate;
             nextFire = Time.time + currWeapon.fireRate;
-            Transform weapTransform = currWeapon.go.transform;
             Transform muzzle = weapTransform.GetChild(weapTransform.childCount - 1);
             muzzle.LookAt(target + aimOffset, Vector3.up);
             Ray ray = new Ray(muzzle.position, muzzle.transform.forward);
             RaycastHit hit;
             Physics.Raycast(ray, out hit, range);
-            Debug.DrawRay(ray.origin, ray.direction * range, Color.cyan);
+            //Debug.DrawRay(ray.origin, ray.direction * range, Color.cyan);
+            //Debug.Log(hit.collider);
             if (hit.collider != null && !hit.collider.CompareTag("Player") && !hit.collider.CompareTag("Weapon"))
             {
                 GameObject go = Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));
                 Destroy(go, 10f);
                 //Destroy(hit.collider.gameObject);
+            }
+            else if(hit.collider != null && hit.collider.CompareTag("Player"))
+            {
+                photonView.RPC("DamagePlayer",
+                    RpcTarget.Others,
+                    hit.collider.gameObject.GetComponent<PhotonView>().ViewID,
+                    currWeapon.damage,
+                    photonView.ViewID
+                    );
+                PhotonNetwork.SendAllOutgoingCommands();
             }
             currWeapon.currBullets--;
         }
@@ -97,6 +123,7 @@ public class ShootingHandling : MonoBehaviourPun
         nextFire = 0;
         nextRecoil = 0;
         recoilTimer = 0;
+        currWeapon.currRecoilStrength = 0;
         aimOffset = Vector3.zero;
         weapon.transform.SetParent(rightHand, false);
         weapon.transform.localPosition = refWeapon.handPos;
@@ -171,12 +198,12 @@ public class ShootingHandling : MonoBehaviourPun
                 allRecoils += transform.TransformDirection(currWeapon.recoils[i].direction) * currWeapon.recoils[i].curve.Evaluate(curveTime);
             }
 
-            aimOffset = Vector3.Lerp(aimOffset, aimOffset + allRecoils, currWeapon.recoilStrength * Time.deltaTime);
+            aimOffset = Vector3.Lerp(aimOffset, aimOffset + allRecoils, currWeapon.currRecoilStrength * Time.deltaTime);
             Vector3 diff = target - (target + aimOffset);
             //Debug.Log(diff);
             //player.camBase.transform.LookAt(target, Vector3.up);
             
-            //player.cam.transform.DOShakeRotation(target + aimOffset, 0.1f);
+            //player.cam.DOShakeRotation(0.5f, 0.5f, 2, 0);
             //player.cam.transform.DOMove
             //player.camBase.mouseX += 20;
             //player.cam.DOShakePosition(0.01f, aimOffset + allRecoils, 0, 0, false);
@@ -207,6 +234,21 @@ public class ShootingHandling : MonoBehaviourPun
             //}
             recoilTimer = 0;
             aimOffset = Vector3.zero;
+        }
+    }
+
+    [PunRPC]
+    public void DamagePlayer(int pID, int damage, int killerID)
+    {
+        PlayerController player = PhotonView.Find(pID).gameObject.GetComponent<PlayerController>();
+
+        if (player.currHealth <= 0) return;
+        //Debug.Log(killerID);       
+
+        player.currHealth -= damage;
+        if(player.currHealth <= 0)
+        {
+            Debug.LogError("Killed by: " + PhotonView.Find(killerID).Owner.NickName);
         }
     }
 

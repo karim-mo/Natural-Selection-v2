@@ -36,7 +36,10 @@ public class WeaponDB : MonoBehaviour
         public float reloadSpeed;
         public float recoilSpeed;
         public float recoilRate;
-        public float recoilStrength;
+        public float LR_recoilStrength;
+        public float MR_recoilStrength;
+        public float HR_recoilStrength;
+        public float currRecoilStrength;
         public Recoil[] recoils;
     }
 

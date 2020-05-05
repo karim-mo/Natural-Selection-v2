@@ -1,5 +1,6 @@
 ﻿using Photon.Pun;
 using System.Collections;
+using System.Xml.Linq;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviourPun, IPunObservable
@@ -11,6 +12,10 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     }
 
     #region Publics
+    [Header("Player stats")]
+    public float maxHealth;
+    public float currHealth;
+
     [Header("Speed settings")]
     public float aimSpeed;
     public float runningSpeed;
@@ -65,6 +70,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public bool G_isRifleUp;
     [HideInInspector]
     public bool R_reloaded;
+    [HideInInspector]
+    public bool D_isDead;
     #endregion
 
 
@@ -89,6 +96,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private bool isJumpDashing;
     private bool grabbingWall;
     private bool Aim;
+    private bool Dead;
 
     private Rigidbody _rb;
     private Animator anim;
@@ -109,6 +117,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     void Update()
     {
         if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
+        if (!canMove) return;
 
         statesHanlder();
 
@@ -225,6 +234,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (currState != States.WEAPON_UP) return;
         if (isGroundDashing || isJumpDashing) return;
         if (grabbingWall) return;
+        if (!canMove) return;
 
         Transform chest = anim.GetBoneTransform(HumanBodyBones.Chest);
         chest.LookAt(targetPos + weapon.aimOffset);
@@ -381,7 +391,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (isReloading) return;
 
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        Debug.DrawRay(ray.origin, ray.direction * 200f, Color.red);
+        //Debug.DrawRay(ray.origin, ray.direction * 200f, Color.red);
         RaycastHit hit;
         fire = Input.GetButton("Fire1");
         if (Physics.Raycast(ray, out hit, 200f))
@@ -390,7 +400,21 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             
             if (fire)
             {
-                weapon.Shoot(targetPos, 200f);
+                if (hit.distance <= 8f)
+                {
+                    weapon.currWeapon.currRecoilStrength = weapon.currWeapon.LR_recoilStrength;
+                }
+                else if (hit.distance <= 20f)
+                {
+                    weapon.currWeapon.currRecoilStrength = weapon.currWeapon.MR_recoilStrength;
+                }
+                else if (hit.distance > 20f)
+                {
+                    weapon.currWeapon.currRecoilStrength = weapon.currWeapon.HR_recoilStrength;
+                }
+
+
+                weapon.Shoot(targetPos, hit.distance);
             }
         }
         else
@@ -407,6 +431,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public void velAndAnimations()
     {
+        if (Dead) return;
         anim.SetBool("Grounded", _grounded);
         anim.SetBool("Rifle", rifleUp);
         anim.SetBool("isGroundDashing", isGroundDashing);
@@ -442,6 +467,9 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         H_isRifleUp = true;
         G_isRifleUp = false;
         R_reloaded = false;
+        Dead = false;
+        D_isDead = false;
+        currHealth = maxHealth;
         gravity = normalGravity;
     }
 
@@ -471,6 +499,14 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         currState = rifleUp ? States.WEAPON_UP : States.WEAPON_DOWN;
         _grounded = isGrounded();
+
+        if(currHealth <= 0 && !Dead)
+        {
+            Dead = true;
+            canMove = false;
+            StartCoroutine("Death");
+            return;
+        }
 
         if (_grounded && !isGroundDashing)
         {
@@ -569,7 +605,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         canShoot = false;
         isHolsteringWep = true;
         anim.SetTrigger("Holster");
-        photonView.RPC("sendTrigger", RpcTarget.Others, "Holster", photonView.ViewID);
+        photonView.RPC("sendTrigger", 
+            RpcTarget.Others, 
+            "Holster", 
+            photonView.ViewID
+            );
         PhotonNetwork.SendAllOutgoingCommands();
         anim.SetInteger("aimState", 0);
         while (H_isRifleUp)
@@ -599,7 +639,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             isHolsteringWep = true;
             anim.SetTrigger("Holster");
-            photonView.RPC("sendTrigger", RpcTarget.Others, "Holster", photonView.ViewID);
+            photonView.RPC("sendTrigger", 
+                RpcTarget.Others, 
+                "Holster", 
+                photonView.ViewID
+                );
             PhotonNetwork.SendAllOutgoingCommands();
             anim.SetInteger("aimState", 0);
             while (H_isRifleUp)
@@ -613,7 +657,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
         m_isGrabbingWep = true;
         anim.SetTrigger("GrabWeapon");
-        photonView.RPC("sendTrigger", RpcTarget.Others, "GrabWeapon", photonView.ViewID);
+        photonView.RPC("sendTrigger", 
+            RpcTarget.Others, 
+            "GrabWeapon", 
+            photonView.ViewID
+            );
         PhotonNetwork.SendAllOutgoingCommands();
         while (!G_isRifleUp)
         {
@@ -632,7 +680,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         isReloading = true;
         canShoot = false;
         anim.SetTrigger("Reload");
-        photonView.RPC("sendTrigger", RpcTarget.Others, "Reload", photonView.ViewID);
+        photonView.RPC("sendTrigger", 
+            RpcTarget.Others, 
+            "Reload", 
+            photonView.ViewID
+            );
         PhotonNetwork.SendAllOutgoingCommands();
         while (!R_reloaded)
         {
@@ -646,7 +698,34 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     IEnumerator Death()
     {
-        yield return null;
+        anim.SetBool("isDead", Dead);
+        if (weapon.currWeapon != null)
+        {
+            weapon.currWeapon = weapon.currWeapons[1];
+            if(weapon.currWeapon.go != null) PhotonNetwork.Destroy(weapon.currWeapon.go);
+            weapon.currWeapon = weapon.currWeapons[0];
+            weapon.Detach(weapon.currWeapon.go, weapon.currWeapon);
+            weapon.currWeapon = null;
+        }
+        rifleUp = false;
+        isHolsteringWep = false;
+        isGrabbingWep = false;
+        isReloading = false;
+        anim.SetLayerWeight(1, 0);
+        //canMove = false;
+        anim.SetInteger("state", 3);
+        yield return new WaitForSeconds(10f);
+        currHealth = maxHealth;
+        weapon.currWeapons[0].currBullets = weapon.currWeapons[0].bullets;
+        weapon.currWeapons[0].currReserve = weapon.currWeapons[0].reserve;
+        weapon.currWeapons[1].currBullets = weapon.currWeapons[1].bullets;
+        weapon.currWeapons[1].currReserve = weapon.currWeapons[1].reserve;
+        Dead = false;
+        anim.SetBool("isDead", Dead);
+        anim.SetInteger("state", 0);
+        GameObject[] spawns = FindObjectOfType<NetworkMgr>().spawnPoints;
+        transform.position = spawns[Random.Range(0, 1000 + 1) % spawns.Length].transform.position;
+        canMove = true;
     }
 
     [PunRPC]
@@ -683,6 +762,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             stream.SendNext(transform.rotation);
             stream.SendNext(targetPos);
             stream.SendNext(currState);
+            stream.SendNext(currHealth);
 
             //stream.SendNext(m_isGrabbingWep);
             //stream.SendNext(isHolsteringWep);
@@ -701,6 +781,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             networkedPlayer.m_networkedRotation = (Quaternion)stream.ReceiveNext();
             targetPos = (Vector3)stream.ReceiveNext();
             currState = (int)stream.ReceiveNext();
+            currHealth = (float)stream.ReceiveNext();
 
             //m_isGrabbingWep = (bool)stream.ReceiveNext();
             //isHolsteringWep = (bool)stream.ReceiveNext();
