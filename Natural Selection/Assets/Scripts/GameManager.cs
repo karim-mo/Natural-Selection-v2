@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviourPun
 {
     public GameObject escapePanel;
+    public GameObject escapeSettings;
+
+    public Slider mouseSens;
 
     private bool cursorOn = false;
     private PlayerController player;
@@ -60,7 +64,9 @@ public class GameManager : MonoBehaviourPun
 
     public void Settings()
     {
-
+        mouseSens.GetComponent<Slider>().value = PlayerPrefs.GetFloat("MOUSE_SENS", 1f);
+        escapeSettings.SetActive(true);
+        escapePanel.SetActive(false);
     }
 
     public void ExitMatch()
@@ -74,6 +80,8 @@ public class GameManager : MonoBehaviourPun
 
     public void optBack()
     {
-
+        PlayerPrefs.SetFloat("MOUSE_SENS", mouseSens.GetComponent<Slider>().value);
+        escapePanel.SetActive(true);
+        escapeSettings.SetActive(false);
     }
 }

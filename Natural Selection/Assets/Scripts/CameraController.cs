@@ -9,6 +9,7 @@ public class CameraController : MonoBehaviour
 	public GameObject CameraFollowObj;
 	public float clampAngle = 80.0f;
 	public float inputSensitivity = 150.0f;
+	public float currSens;
 	public float mouseX;
 	public float mouseY;
 	public Vector3 offset;
@@ -24,15 +25,18 @@ public class CameraController : MonoBehaviour
 		Vector3 rot = transform.localRotation.eulerAngles;
 		Yaw = rot.y;
 		Pitch = rot.x;
+		currSens = inputSensitivity;
 	}
 
 	void Update()
 	{
+
 		mouseX = Input.GetAxis("Mouse X");
 		mouseY = Input.GetAxis("Mouse Y");
+		currSens = PlayerPrefs.GetFloat("MOUSE_SENS", 1) * inputSensitivity;
 
-		Yaw += mouseX * inputSensitivity * Time.fixedDeltaTime;
-		Pitch -= mouseY * inputSensitivity * Time.fixedDeltaTime;
+		Yaw += mouseX * currSens * Time.fixedDeltaTime;
+		Pitch -= mouseY * currSens * Time.fixedDeltaTime;
 
 		Pitch = Mathf.Clamp(Pitch, -clampAngle, clampAngle);
 
