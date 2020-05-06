@@ -98,6 +98,12 @@ public class ShootingHandling : MonoBehaviourPun
             Physics.Raycast(ray, out hit, range);
             //Debug.DrawRay(ray.origin, ray.direction * range, Color.cyan);
             //Debug.Log(hit.collider);
+            player._audio.PlayOne(currWeapon.audioName);
+            photonView.RPC("playAudio", 
+                RpcTarget.Others,
+                currWeapon.audioName
+                );
+
             if (hit.collider != null && !hit.collider.CompareTag("Player") && !hit.collider.CompareTag("Weapon"))
             {
                 GameObject go = Instantiate(bulletHole, hit.point, Quaternion.FromToRotation(Vector3.forward, hit.normal));

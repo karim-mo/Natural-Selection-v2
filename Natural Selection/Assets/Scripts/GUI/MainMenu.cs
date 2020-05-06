@@ -109,7 +109,7 @@ public class MainMenu : MonoBehaviour
 
     public void optApply()
     {
-        AudioManager.Play("Click");
+        //AudioManager.Play("Click");
         string res = SelectedOption.GetComponent<TextMeshProUGUI>().text;
         if (res.Equals("1280 x 720"))
         {

@@ -576,6 +576,7 @@ GameObject:
   - component: {fileID: -3544466916107040789}
   - component: {fileID: 7841271121520892488}
   - component: {fileID: -5759679150923610487}
+  - component: {fileID: 2135952678402961655}
   m_Layer: 10
   m_Name: Swat
   m_TagString: Player
@@ -667,6 +668,15 @@ MonoBehaviour:
   runningSpeed: 4.5
   strafeSpeed: 2.5
   backwardSpeed: 2.5
+  diagonalRate: 0.4
+  runningRate: 0.25
+  backwardRate: 0.35
+  strafeRate: 0.35
+  aimRate: 0.3
+  rifleRunningRate: 0.4
+  rifleStrafeRate: 0.3
+  rifleBackwardRate: 0.28
+  rifleDiagonalRate: 0.25
   gravity: 1400
   wallGravity: 200
   normalGravity: 1400
@@ -699,6 +709,7 @@ MonoBehaviour:
   canMove: 0
   isGroundDashing: 0
   isJumpDashing: 0
+  _audio: {fileID: 0}
 --- !u!114 &5520013390022163975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -727,6 +738,7 @@ MonoBehaviour:
     spineRot: {x: 0, y: 0, z: 0}
     name: 
     type: 
+    audioName: 
     bullets: 0
     reserve: 0
     currBullets: 0
@@ -752,6 +764,7 @@ MonoBehaviour:
     spineRot: {x: 0, y: 0, z: 0}
     name: 
     type: 
+    audioName: 
     bullets: 0
     reserve: 0
     currBullets: 0
@@ -807,6 +820,11 @@ MonoBehaviour:
   m_timePacketSent: 0
   lastTimePacketSent: 0
   currTimer: 0
+  nextFootstep: 0
+  footRate: 0
+  isGroundDashing: 0
+  isJumpDashing: 0
+  _grounded: 0
 --- !u!114 &-3544466916107040789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,6 +925,83 @@ MonoBehaviour:
     LayerIndex: 1
   - SynchronizeType: 0
     LayerIndex: 2
+--- !u!114 &2135952678402961655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3226623038607819109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2a0599a9205ac54cb3362dc7c8fcc25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Footstep 1
+    clip: {fileID: 8300000, guid: 90f5c40200be9ee448f2b4a8c5ccd08e, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 10
+    loop: 0
+    source: {fileID: 0}
+  - name: Footstep 2
+    clip: {fileID: 8300000, guid: aef6690faa5a63942a49dfb15fcb2e40, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 10
+    loop: 0
+    source: {fileID: 0}
+  - name: Footstep 3
+    clip: {fileID: 8300000, guid: 7e9fcfe3a016e104cb32bf518845a36b, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 10
+    loop: 0
+    source: {fileID: 0}
+  - name: Footstep 4
+    clip: {fileID: 8300000, guid: b5f0ee5f70fb563499ba14f096522175, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 10
+    loop: 0
+    source: {fileID: 0}
+  - name: M4Shot
+    clip: {fileID: 8300000, guid: 71b632c418c09114f8c2cbb7fa4548e7, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 20
+    loop: 0
+    source: {fileID: 0}
+  - name: AKShot
+    clip: {fileID: 8300000, guid: 1ebc5eaa935d8194381e9d03f575548b, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 20
+    loop: 0
+    source: {fileID: 0}
+  - name: PlayerHit
+    clip: {fileID: 8300000, guid: b5f0ee5f70fb563499ba14f096522175, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 20
+    loop: 0
+    source: {fileID: 0}
+  - name: WeaponOut
+    clip: {fileID: 8300000, guid: 08d196bf42ae88c43a72624f602891a0, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 20
+    loop: 0
+    source: {fileID: 0}
 --- !u!1 &3242295177667589376
 GameObject:
   m_ObjectHideFlags: 0

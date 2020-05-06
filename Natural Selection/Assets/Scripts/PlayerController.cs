@@ -15,13 +15,24 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     [Header("Player stats")]
     public float maxHealth;
     public float currHealth;
+    
 
     [Header("Speed settings")]
     public float aimSpeed;
     public float runningSpeed;
     public float strafeSpeed;
     public float backwardSpeed;
-    
+    public float diagonalRate;
+    public float runningRate;
+    public float backwardRate;
+    public float strafeRate;
+    public float aimRate;
+    public float rifleRunningRate;
+    public float rifleStrafeRate;
+    public float rifleBackwardRate;
+    public float rifleDiagonalRate;
+
+
     [Header("Gravity settings")]
     public float gravity;
     public float wallGravity;
@@ -84,6 +95,9 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public bool isGroundDashing;
     [HideInInspector]
     public bool isJumpDashing;
+    [HideInInspector]
+    public AudioManager _audio;
+
     #endregion
 
 
@@ -97,6 +111,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private float m_prevX;
     private float mainCamFOV;
     private float aimFOV;
+    private float footRate;
+    private float nextFootstep;
     private bool _grounded;
     private bool rifleUp;
     private bool canShoot;
@@ -150,7 +166,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         _x = Input.GetAxisRaw("Horizontal");
         _z = Input.GetAxisRaw("Vertical");
 
-
         shootingHandling();
         handleRotation();
         /*
@@ -161,10 +176,48 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         else if (Aim) _currSpeed = aimSpeed;
         */
         //Fuck the above solution in particular, feels hardcoded
-        if (_z > 0 && Mathf.Abs(_x) >= 0 && !Aim) _currSpeed = runningSpeed;
-        else if (_z < 0 && Mathf.Abs(_x) >= 0 && !Aim) _currSpeed = backwardSpeed;
-        else if (Mathf.Abs(_x) > 0 && !Aim && _z == 0) _currSpeed = strafeSpeed;
-        else if (Aim) _currSpeed = aimSpeed;
+        if (_z > 0 && Mathf.Abs(_x) >= 0 && !Aim)
+        {
+            _currSpeed = runningSpeed;
+            footRate = runningRate;
+        }
+        else if (_z < 0 && Mathf.Abs(_x) >= 0 && !Aim)
+        {
+            _currSpeed = backwardSpeed;
+            footRate = backwardRate;
+        }
+        else if (Mathf.Abs(_x) > 0 && !Aim && _z == 0)
+        {
+            _currSpeed = strafeSpeed;
+            footRate = strafeRate;
+        }
+        else if (Aim)
+        {
+            _currSpeed = aimSpeed;
+            footRate = aimRate;
+        }
+
+
+
+        if (_z > 0 && Mathf.Abs(_x) > 0 && !Aim) footRate = diagonalRate;
+
+
+        if (_z > 0 && Mathf.Abs(_x) >= 0 && !Aim && currState == States.WEAPON_UP)
+        {
+            footRate = rifleRunningRate;
+        }
+        else if (_z < 0 && Mathf.Abs(_x) >= 0 && !Aim && currState == States.WEAPON_UP)
+        {
+            footRate = rifleBackwardRate;
+        }
+        else if (Mathf.Abs(_x) > 0 && !Aim && _z == 0 && currState == States.WEAPON_UP)
+        {
+            footRate = rifleStrafeRate;
+        }
+
+        if (_z > 0 && Mathf.Abs(_x) > 0 && !Aim && currState == States.WEAPON_UP) footRate = rifleDiagonalRate;
+
+        //if (currState == States.WEAPON_UP) footRate = rifleRate;
 
         //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 0.25f, Color.cyan);
 
@@ -277,6 +330,30 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         if (!canMove) return;
         if (isGroundDashing) return;
+
+        //Debug.Log(dir.magnitude);
+
+        if(dir.magnitude > 0.1f && Time.time > nextFootstep && !isGroundDashing && !isJumpDashing && _grounded)
+        {
+            //Debug.Log("haha");
+            nextFootstep = Time.time + footRate;
+            AudioManager.Sound randomClip = _audio.sounds[Random.Range(0, 4)];
+            _audio.PlayOne(randomClip.name);
+            photonView.RPC("playAudio", 
+                RpcTarget.Others, 
+                randomClip.name
+                );
+            //GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSource>().clip);
+        }
+        //else if((dir.magnitude < 0.05f && footRate != strafeRate && footRate != rifleStrafeRate) || isGroundDashing || isJumpDashing || !_grounded)
+        //{
+        //    //audio.Stop("Running");
+        //    for (int i = 0; i < 4; i++)
+        //    {
+        //        AudioManager.Sound randomClip = _audio.sounds[i];
+        //        _audio.Stop(randomClip.name);
+        //    }
+        //}
 
         if (_grounded)
             _rb.velocity = transform.TransformDirection(dir.x, _rb.velocity.y, dir.y);
@@ -491,6 +568,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         col = GetComponent<CapsuleCollider>();
         weapon = GetComponent<ShootingHandling>();
         networkedPlayer = GetComponent<NetworkController>();
+        _audio = GetComponent<AudioManager>();
     }
 
     public void handleRotation()
@@ -684,7 +762,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         G_isRifleUp = false;
         anim.SetInteger("aimState", 1);
         canShoot = true;
-        isGrabbingWep = false;      
+        isGrabbingWep = false;
+        _audio.Play("WeaponOut");
     }
 
     IEnumerator Reload()
@@ -698,6 +777,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             photonView.ViewID
             );
         PhotonNetwork.SendAllOutgoingCommands();
+        _audio.Play("Reload");
         while (!R_reloaded)
         {
             yield return null;
@@ -734,6 +814,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         weapon.currWeapons[1].currReserve = weapon.currWeapons[1].reserve;
         Dead = false;
         anim.SetBool("isDead", Dead);
+        anim.SetInteger("aimState", 0);
         anim.SetInteger("state", 0);
         GameObject[] spawns = FindObjectOfType<NetworkMgr>().spawnPoints;
         transform.position = spawns[Random.Range(0, 1000 + 1) % spawns.Length].transform.position;
@@ -752,6 +833,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
                 return;
             }
         }
+    }
+
+    [PunRPC]
+    public void playAudio(string name)
+    {
+        AudioSource.PlayClipAtPoint(_audio.Find(name), transform.position);
     }
     //[PunRPC]
     //void updateVelocity(Vector3 v, Vector3 p)
@@ -777,6 +864,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             stream.SendNext(currHealth);
             stream.SendNext(kills);
             stream.SendNext(deaths);
+
+            //stream.SendNext(isGroundDashing);
+            //stream.SendNext(isJumpDashing);
+            //stream.SendNext(_grounded);
+            //stream.SendNext(footRate);
             //stream.SendNext(m_isGrabbingWep);
             //stream.SendNext(isHolsteringWep);
             //stream.SendNext(isReloading);
@@ -797,6 +889,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             currHealth = (float)stream.ReceiveNext();
             kills = (int)stream.ReceiveNext();
             deaths = (int)stream.ReceiveNext();
+
+            //networkedPlayer.isGroundDashing = (bool)stream.ReceiveNext();
+            //networkedPlayer.isJumpDashing = (bool)stream.ReceiveNext();
+            //networkedPlayer._grounded = (bool)stream.ReceiveNext();
+            //networkedPlayer.footRate = (float)stream.ReceiveNext();
 
             //m_isGrabbingWep = (bool)stream.ReceiveNext();
             //isHolsteringWep = (bool)stream.ReceiveNext();

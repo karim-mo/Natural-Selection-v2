@@ -45,6 +45,7 @@ MonoBehaviour:
   - AddToFeed
   - activateScoreBoard
   - _EndGame
+  - playAudio
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

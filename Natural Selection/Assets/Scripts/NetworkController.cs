@@ -59,9 +59,20 @@ public class NetworkController : MonoBehaviourPun
     public float lastTimePacketSent;
     [HideInInspector]
     public float currTimer = 0;
+    [HideInInspector]
+    public float nextFootstep;
+    [HideInInspector]
+    public float footRate;
+    [HideInInspector]
+    public bool isGroundDashing;
+    [HideInInspector]
+    public bool isJumpDashing;
+    [HideInInspector]
+    public bool _grounded;
 
     private PlayerController player;
     private Animator anim;
+    private AudioManager _audio;
 
     // Start is called before the first frame update
     void Start()
@@ -70,6 +81,7 @@ public class NetworkController : MonoBehaviourPun
 
         player = GetComponent<PlayerController>();
         anim = GetComponent<Animator>();
+        _audio = GetComponent<AudioManager>();
     }
 
     // Update is called once per frame
@@ -96,6 +108,7 @@ public class NetworkController : MonoBehaviourPun
         //updateNetworkPosition();
         //Debug.Log(GrabWeaponBehaviour.isRifleUp);
         //updateNetworkAnims();
+        //networkSounds();
         updateNetworkRotation();
     }
 
@@ -185,6 +198,28 @@ public class NetworkController : MonoBehaviourPun
         //{
         //    _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
         //}
+    }
+
+    public void networkSounds()
+    {
+        Vector3 dir = m_networkedPosition - transform.position;
+        if (dir.magnitude > 0.05f && Time.time > nextFootstep && !isGroundDashing && !isJumpDashing && _grounded)
+        {
+            //Debug.Log("haha");
+            nextFootstep = Time.time + footRate;
+            AudioManager.Sound randomClip = _audio.sounds[Random.Range(0, 4)];
+            _audio.PlayOne(randomClip.name);
+            //GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSource>().clip);
+        }
+        else if (dir.magnitude < 0.05f || isGroundDashing || isJumpDashing || !_grounded)
+        {
+            //audio.Stop("Running");
+            for (int i = 0; i < 4; i++)
+            {
+                AudioManager.Sound randomClip = _audio.sounds[i];
+                _audio.Stop(randomClip.name);
+            }
+        }
     }
 
     public void updateNetworkAnims()

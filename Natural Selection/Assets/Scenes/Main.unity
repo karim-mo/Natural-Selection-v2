@@ -3817,8 +3817,8 @@ GameObject:
   m_Component:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
-  - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194226}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -17234,6 +17234,7 @@ MonoBehaviour:
     spineRot: {x: 51.085, y: -91.273, z: 0.42}
     name: M4A1
     type: Assault Rifle
+    audioName: M4Shot
     bullets: 30
     reserve: 120
     currBullets: 0
@@ -17345,6 +17346,7 @@ MonoBehaviour:
     spineRot: {x: 5.312, y: -189.458, z: -51.776}
     name: AK47
     type: Assault Rifle
+    audioName: AKShot
     bullets: 30
     reserve: 120
     currBullets: 0
@@ -17478,10 +17480,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: 
+  - name: Footstep 1
     clip: {fileID: 8300000, guid: 90f5c40200be9ee448f2b4a8c5ccd08e, type: 3}
-    volume: 0
-    pitch: 0
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 20
+    loop: 0
+    source: {fileID: 0}
+  - name: Footstep 2
+    clip: {fileID: 8300000, guid: aef6690faa5a63942a49dfb15fcb2e40, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 20
+    loop: 0
+    source: {fileID: 0}
+  - name: Footstep 3
+    clip: {fileID: 8300000, guid: 7e9fcfe3a016e104cb32bf518845a36b, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 20
+    loop: 0
+    source: {fileID: 0}
+  - name: Footstep 4
+    clip: {fileID: 8300000, guid: b5f0ee5f70fb563499ba14f096522175, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 20
     loop: 0
     source: {fileID: 0}
 --- !u!114 &1817691288

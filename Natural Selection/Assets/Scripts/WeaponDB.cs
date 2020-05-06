@@ -25,6 +25,7 @@ public class WeaponDB : MonoBehaviour
         public Vector3 spineRot;
         public string name;
         public string type;
+        public string audioName;
         public int bullets;
         public int reserve;
         public int currBullets;

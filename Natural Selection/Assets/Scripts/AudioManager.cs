@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : MonoBehaviourPun
 {
+    //public static AudioManager instance;
+
     [System.Serializable]
     public class Sound
     {
@@ -33,8 +36,16 @@ public class AudioManager : MonoBehaviour
 
     private static List<Sound> cache;
 
+    //private void Awake()
+    //{
+    //    if (instance != null) Destroy(instance);
+    //    else
+    //        instance = this;
+    //}
+
     void Start()
     {
+        if (!photonView.IsMine) return;
         cache = new List<Sound>();
 
         foreach (Sound s in sounds)
@@ -53,7 +64,7 @@ public class AudioManager : MonoBehaviour
         Play("BGM");
     }
 
-    public static void MuteMusic()
+    public void MuteMusic()
     {
         foreach (Sound s in cache)
         {
@@ -65,7 +76,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public static void UnmuteMusic()
+    public void UnmuteMusic()
     {
         foreach (Sound s in cache)
         {
@@ -77,7 +88,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public static void Play(string n)
+    public void Play(string n)
     {
         foreach (Sound s in cache)
         {
@@ -88,7 +99,7 @@ public class AudioManager : MonoBehaviour
             }
         }
     }
-    public static void PlayOne(string n)
+    public void PlayOne(string n)
     {
         foreach (Sound s in cache)
         {
@@ -100,7 +111,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public static void Stop(string n)
+    public void Stop(string n)
     {
         foreach (Sound s in cache)
         {
@@ -110,6 +121,18 @@ public class AudioManager : MonoBehaviour
                 return;
             }
         }
+    }
+
+    public AudioClip Find(string n)
+    {
+        foreach (Sound s in cache)
+        {
+            if (s.name == n)
+            {
+                 return s.clip;
+            }
+        }
+        return null;
     }
 }
 
