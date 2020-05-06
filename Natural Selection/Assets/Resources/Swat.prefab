@@ -987,7 +987,7 @@ MonoBehaviour:
     loop: 0
     source: {fileID: 0}
   - name: PlayerHit
-    clip: {fileID: 8300000, guid: b5f0ee5f70fb563499ba14f096522175, type: 3}
+    clip: {fileID: 8300000, guid: 0fdb47405cf6e9d48bda80cdda8397d8, type: 3}
     volume: 0.7
     pitch: 1
     spatialBlend: 1
@@ -996,6 +996,14 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: WeaponOut
     clip: {fileID: 8300000, guid: 08d196bf42ae88c43a72624f602891a0, type: 3}
+    volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 20
+    loop: 0
+    source: {fileID: 0}
+  - name: Reload
+    clip: {fileID: 8300000, guid: 5ae2f323230ebff43927b9fcaf739230, type: 3}
     volume: 0.7
     pitch: 1
     spatialBlend: 1
