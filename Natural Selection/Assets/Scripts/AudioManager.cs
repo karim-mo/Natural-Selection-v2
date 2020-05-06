@@ -45,7 +45,9 @@ public class AudioManager : MonoBehaviourPun
 
     void Start()
     {
-        if (!photonView.IsMine) return;
+        if(GetComponent<PhotonView>()) 
+            if (!photonView.IsMine) return;
+
         cache = new List<Sound>();
 
         foreach (Sound s in sounds)

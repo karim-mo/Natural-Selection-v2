@@ -7100,6 +7100,7 @@ GameObject:
   - component: {fileID: 1524899952}
   - component: {fileID: 1524899953}
   - component: {fileID: 1524899954}
+  - component: {fileID: 1524899955}
   m_Layer: 0
   m_Name: GM
   m_TagString: Untagged
@@ -7152,6 +7153,27 @@ MonoBehaviour:
   SelectedOption: {fileID: 545422855}
   Slider: {fileID: 1220010324}
   nameInput: {fileID: 994916914}
+--- !u!114 &1524899955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1524899951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2a0599a9205ac54cb3362dc7c8fcc25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: BGM
+    clip: {fileID: 8300000, guid: 0c6b669d7586aa447b7d9bac3c2adca6, type: 3}
+    volume: 0.2
+    pitch: 1
+    spatialBlend: 0
+    maxDistance: 0
+    loop: 1
+    source: {fileID: 0}
 --- !u!1 &1550386096
 GameObject:
   m_ObjectHideFlags: 0

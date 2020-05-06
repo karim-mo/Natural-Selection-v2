@@ -17173,7 +17173,6 @@ GameObject:
   - component: {fileID: 1817691285}
   - component: {fileID: 1817691284}
   - component: {fileID: 1817691286}
-  - component: {fileID: 1817691287}
   - component: {fileID: 1817691288}
   - component: {fileID: 1817691290}
   - component: {fileID: 1817691289}
@@ -17467,51 +17466,6 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 0
       direction: {x: 0.5, y: 0, z: 0}
---- !u!114 &1817691287
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1817691283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2a0599a9205ac54cb3362dc7c8fcc25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sounds:
-  - name: Footstep 1
-    clip: {fileID: 8300000, guid: 90f5c40200be9ee448f2b4a8c5ccd08e, type: 3}
-    volume: 0.7
-    pitch: 1
-    spatialBlend: 1
-    maxDistance: 20
-    loop: 0
-    source: {fileID: 0}
-  - name: Footstep 2
-    clip: {fileID: 8300000, guid: aef6690faa5a63942a49dfb15fcb2e40, type: 3}
-    volume: 0.7
-    pitch: 1
-    spatialBlend: 1
-    maxDistance: 20
-    loop: 0
-    source: {fileID: 0}
-  - name: Footstep 3
-    clip: {fileID: 8300000, guid: 7e9fcfe3a016e104cb32bf518845a36b, type: 3}
-    volume: 0.7
-    pitch: 1
-    spatialBlend: 1
-    maxDistance: 20
-    loop: 0
-    source: {fileID: 0}
-  - name: Footstep 4
-    clip: {fileID: 8300000, guid: b5f0ee5f70fb563499ba14f096522175, type: 3}
-    volume: 0.7
-    pitch: 1
-    spatialBlend: 1
-    maxDistance: 20
-    loop: 0
-    source: {fileID: 0}
 --- !u!114 &1817691288
 MonoBehaviour:
   m_ObjectHideFlags: 0
