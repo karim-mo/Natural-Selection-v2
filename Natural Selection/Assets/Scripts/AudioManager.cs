@@ -16,6 +16,10 @@ public class AudioManager : MonoBehaviour
         public float volume;
         [Range(0, 1)]
         public float pitch;
+        [Range(0, 1)]
+        public float spatialBlend;
+
+        public float maxDistance;
 
         public bool loop;
 
@@ -41,6 +45,8 @@ public class AudioManager : MonoBehaviour
             s.source.loop = s.loop;
             s.source.volume = s.volume;
             s.source.pitch = s.pitch;
+            s.source.spatialBlend = s.spatialBlend;
+            s.source.maxDistance = s.maxDistance;
 
             cache.Add(s);
         }
@@ -78,6 +84,17 @@ public class AudioManager : MonoBehaviour
             if (s.name == n)
             {
                 s.source.Play();
+                return;
+            }
+        }
+    }
+    public static void PlayOne(string n)
+    {
+        foreach (Sound s in cache)
+        {
+            if (s.name == n)
+            {
+                s.source.PlayOneShot(s.clip);
                 return;
             }
         }
