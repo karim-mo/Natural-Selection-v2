@@ -784,7 +784,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxStamina: 100
   staminaRechargeSpeed: 2
-  staminaMaxRechargeSpeed: 8
+  staminaMaxRechargeSpeed: 5
   m_currStamina: 0
   currState: 0
   staminaBar: {fileID: 0}

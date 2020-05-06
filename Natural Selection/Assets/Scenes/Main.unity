@@ -14471,7 +14471,7 @@ MonoBehaviour:
     fireRate: 0.1
     animSpeed: 1
     reloadSpeed: 1
-    recoilSpeed: 2
+    recoilSpeed: 1
     recoilRate: 0.2
     LR_recoilStrength: 0.5
     MR_recoilStrength: 1.5
@@ -14563,7 +14563,7 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 0
-      direction: {x: 1, y: 0, z: 0}
+      direction: {x: 0.5, y: 0, z: 0}
   - prefab: {fileID: 5735490956614996096, guid: f52b30236a0343843a01749f9a1d4bff,
       type: 3}
     go: {fileID: 0}
@@ -14582,12 +14582,12 @@ MonoBehaviour:
     fireRate: 0.1
     animSpeed: 1
     reloadSpeed: 1
-    recoilSpeed: 2
+    recoilSpeed: 1
     recoilRate: 0.2
     LR_recoilStrength: 1
     MR_recoilStrength: 2
     HR_recoilStrength: 5
-    currRecoilStrength: 1
+    currRecoilStrength: 0
     recoils:
     - curve:
         serializedVersion: 2
@@ -14613,7 +14613,7 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 0
-      direction: {x: 0, y: 1, z: 0}
+      direction: {x: 0, y: 0.2, z: 0}
     - curve:
         serializedVersion: 2
         m_Curve:
@@ -14692,7 +14692,7 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 0
-      direction: {x: 1, y: 0, z: 0}
+      direction: {x: 0.5, y: 0, z: 0}
 --- !u!114 &1817691287
 MonoBehaviour:
   m_ObjectHideFlags: 0
