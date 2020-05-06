@@ -341,7 +341,9 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             _audio.PlayOne(randomClip.name);
             photonView.RPC("playAudio", 
                 RpcTarget.Others, 
-                randomClip.name
+                randomClip.name,
+                0,
+                false
                 );
             //GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSource>().clip);
         }
@@ -689,6 +691,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
         StartCoroutine("Reload");
     }
+    
+    public void playSound(string clip)
+    {
+        _audio.PlayOne(clip);
+    }
 
     IEnumerator HolsterWeapon()
     {
@@ -836,9 +843,16 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    public void playAudio(string name)
+    public void playAudio(string name, int wepID, bool shoot)
     {
         AudioSource.PlayClipAtPoint(_audio.Find(name), transform.position);
+        if (shoot)
+        {
+            Transform weapon = PhotonView.Find(wepID).gameObject.transform;
+            Transform muzzle = weapon.GetChild(weapon.childCount - 1);
+            ParticleSystem muzzleFlash = muzzle.GetChild(0).GetComponent<ParticleSystem>();
+            muzzleFlash.Play();
+        }
     }
     //[PunRPC]
     //void updateVelocity(Vector3 v, Vector3 p)

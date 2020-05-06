@@ -1,46 +1,115 @@
 fileFormatVersion: 2
 guid: da4dbbf05929a40deb394cfa98d8bf03
-timeCreated: 1494047622
-licenseType: Store
 ModelImporter:
-  serializedVersion: 19
-  fileIDToRecycleName:
-    100000: Balk_01
-    100002: Balk_02
-    100004: Balk_03
-    100006: Balk_04
-    100008: Container_01
-    100010: Container_02
-    100012: //RootNode
-    400000: Balk_01
-    400002: Balk_02
-    400004: Balk_03
-    400006: Balk_04
-    400008: Container_01
-    400010: Container_02
-    400012: //RootNode
-    2300000: Balk_01
-    2300002: Balk_02
-    2300004: Balk_03
-    2300006: Balk_04
-    2300008: Container_01
-    2300010: Container_02
-    3300000: Balk_01
-    3300002: Balk_02
-    3300004: Balk_03
-    3300006: Balk_04
-    3300008: Container_01
-    3300010: Container_02
-    4300000: Container_01
-    4300002: Container_02
-    4300004: Balk_04
-    4300006: Balk_03
-    4300008: Balk_02
-    4300010: Balk_01
+  serializedVersion: 26
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Balk_01
+  - first:
+      1: 100002
+    second: Balk_02
+  - first:
+      1: 100004
+    second: Balk_03
+  - first:
+      1: 100006
+    second: Balk_04
+  - first:
+      1: 100008
+    second: Container_01
+  - first:
+      1: 100010
+    second: Container_02
+  - first:
+      1: 100012
+    second: //RootNode
+  - first:
+      4: 400000
+    second: Balk_01
+  - first:
+      4: 400002
+    second: Balk_02
+  - first:
+      4: 400004
+    second: Balk_03
+  - first:
+      4: 400006
+    second: Balk_04
+  - first:
+      4: 400008
+    second: Container_01
+  - first:
+      4: 400010
+    second: Container_02
+  - first:
+      4: 400012
+    second: //RootNode
+  - first:
+      23: 2300000
+    second: Balk_01
+  - first:
+      23: 2300002
+    second: Balk_02
+  - first:
+      23: 2300004
+    second: Balk_03
+  - first:
+      23: 2300006
+    second: Balk_04
+  - first:
+      23: 2300008
+    second: Container_01
+  - first:
+      23: 2300010
+    second: Container_02
+  - first:
+      33: 3300000
+    second: Balk_01
+  - first:
+      33: 3300002
+    second: Balk_02
+  - first:
+      33: 3300004
+    second: Balk_03
+  - first:
+      33: 3300006
+    second: Balk_04
+  - first:
+      33: 3300008
+    second: Container_01
+  - first:
+      33: 3300010
+    second: Container_02
+  - first:
+      43: 4300000
+    second: Container_01
+  - first:
+      43: 4300002
+    second: Container_02
+  - first:
+      43: 4300004
+    second: Balk_04
+  - first:
+      43: 4300006
+    second: Balk_03
+  - first:
+      43: 4300008
+    second: Balk_02
+  - first:
+      43: 4300010
+    second: Balk_01
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Detail_03
+    second: {fileID: 2100000, guid: ff2771fe13b43419d9b9d8f02fa1334a, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -53,12 +122,15 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations: []
     isReadable: 1
   meshes:
@@ -66,13 +138,23 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -82,10 +164,15 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -95,8 +182,8 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1

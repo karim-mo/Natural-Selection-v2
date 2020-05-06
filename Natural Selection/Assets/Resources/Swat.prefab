@@ -727,6 +727,7 @@ MonoBehaviour:
   Bullet: {fileID: 7997152919141014874, guid: f5f6f70f384b3644080606c3d93d3cdb, type: 3}
   bulletHole: {fileID: 7946735395888295587, guid: ad513ab0c6bc19641a054976f13b9ff6,
     type: 3}
+  muzzleFlash: {fileID: 100006, guid: e7333184595185047a002e7d87551332, type: 3}
   cam: {fileID: 0}
   currWeapons: []
   currWeapon:
@@ -972,7 +973,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: M4Shot
     clip: {fileID: 8300000, guid: 71b632c418c09114f8c2cbb7fa4548e7, type: 3}
-    volume: 0.7
+    volume: 0.5
     pitch: 1
     spatialBlend: 1
     maxDistance: 20
@@ -980,7 +981,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: AKShot
     clip: {fileID: 8300000, guid: 1ebc5eaa935d8194381e9d03f575548b, type: 3}
-    volume: 0.7
+    volume: 0.5
     pitch: 1
     spatialBlend: 1
     maxDistance: 20
@@ -988,7 +989,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: PlayerHit
     clip: {fileID: 8300000, guid: 0fdb47405cf6e9d48bda80cdda8397d8, type: 3}
-    volume: 0.7
+    volume: 1
     pitch: 1
     spatialBlend: 1
     maxDistance: 20
@@ -1005,6 +1006,14 @@ MonoBehaviour:
   - name: Reload
     clip: {fileID: 8300000, guid: 5ae2f323230ebff43927b9fcaf739230, type: 3}
     volume: 0.7
+    pitch: 1
+    spatialBlend: 1
+    maxDistance: 20
+    loop: 0
+    source: {fileID: 0}
+  - name: HitSelf
+    clip: {fileID: 8300000, guid: aafc8e2cbea58454aa638dfdacfb54d8, type: 3}
+    volume: 1
     pitch: 1
     spatialBlend: 1
     maxDistance: 20

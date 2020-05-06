@@ -15,7 +15,7 @@ public class ShootingHandling : MonoBehaviourPun
     [Header("Bullet Prefabs")]
     public GameObject Bullet;
     public GameObject bulletHole;
-
+    public GameObject muzzleFlash;
 
     public Camera cam;
 
@@ -96,12 +96,25 @@ public class ShootingHandling : MonoBehaviourPun
             Ray ray = new Ray(muzzle.position, muzzle.transform.forward);
             RaycastHit hit;
             Physics.Raycast(ray, out hit, range);
+
+            ParticleSystem muzzleFlash = muzzle.GetChild(0).GetComponent<ParticleSystem>();
+            muzzleFlash.Play();
+
             //Debug.DrawRay(ray.origin, ray.direction * range, Color.cyan);
             //Debug.Log(hit.collider);
+
+            //GameObject clone = PhotonNetwork.Instantiate(muzzleFlash.name, muzzle.position, muzzle.rotation);
+            //clone.transform.SetParent(muzzle);
+            //clone.transform.LookAt(target + aimOffset, Vector3.up);
+            //PhotonNetwork.Destroy(clone, 0.1f);
+            //Destroy(clone, 0.1f);
+
             player._audio.PlayOne(currWeapon.audioName);
             photonView.RPC("playAudio", 
                 RpcTarget.Others,
-                currWeapon.audioName
+                currWeapon.audioName,
+                currWeapon.go.GetComponent<PhotonView>().ViewID,
+                true
                 );
 
             if (hit.collider != null && !hit.collider.CompareTag("Player") && !hit.collider.CompareTag("Weapon"))
@@ -112,6 +125,8 @@ public class ShootingHandling : MonoBehaviourPun
             }
             else if(hit.collider != null && hit.collider.CompareTag("Player"))
             {
+                player._audio.PlayOne("PlayerHit");
+
                 //Debug.LogError("My local viewID:" + photonView.ViewID);
                 hit.collider.gameObject.GetComponent<PhotonView>().RPC("DamagePlayer",
                     RpcTarget.Others,
@@ -253,6 +268,7 @@ public class ShootingHandling : MonoBehaviourPun
         if (_player.currHealth <= 0) return;
 
         _player.currHealth -= damage;
+        _player.playSound("HitSelf");
         if(_player.currHealth <= 0)
         {
             photonView.RPC("AddToFeed",
