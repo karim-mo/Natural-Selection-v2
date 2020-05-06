@@ -42,6 +42,9 @@ MonoBehaviour:
   - SetWeaponSpineParent
   - sendTrigger
   - DamagePlayer
+  - AddToFeed
+  - activateScoreBoard
+  - _EndGame
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

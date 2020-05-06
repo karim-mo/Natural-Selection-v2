@@ -11,8 +11,8 @@ public class uselessgm : MonoBehaviour
         GameObject cube = Instantiate(prefab, prefab.transform.position, Quaternion.identity);
         
         GameObject _cube = Instantiate(prefab, prefab.transform.position, Quaternion.identity);
-        cube.GetComponent<CubeTest>().speed = 7;
-        cube.GetComponent<Rigidbody>().useGravity = false;
+        //cube.GetComponent<CubeTest>().speed = 7;
+        //cube.GetComponent<Rigidbody>().useGravity = false;
     }
 
     // Update is called once per frame

@@ -693,6 +693,12 @@ MonoBehaviour:
   G_isRifleUp: 0
   R_reloaded: 0
   D_isDead: 0
+  weapon: {fileID: 0}
+  kills: 0
+  deaths: 0
+  canMove: 0
+  isGroundDashing: 0
+  isJumpDashing: 0
 --- !u!114 &5520013390022163975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -776,9 +782,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55a8b0a08f655b644a772a98cd1ae605, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxStamina: 0
-  staminaRechargeSpeed: 0
-  staminaMaxRechargeSpeed: 0
+  maxStamina: 100
+  staminaRechargeSpeed: 2
+  staminaMaxRechargeSpeed: 8
+  m_currStamina: 0
   currState: 0
   staminaBar: {fileID: 0}
 --- !u!114 &1377338617201780043

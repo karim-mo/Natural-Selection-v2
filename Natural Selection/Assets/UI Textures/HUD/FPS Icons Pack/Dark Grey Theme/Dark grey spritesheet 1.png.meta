@@ -233,8 +233,8 @@ TextureImporter:
       name: DGT Bullet 4
       rect:
         serializedVersion: 2
-        x: 675
-        y: 3449
+        x: 1786
+        y: 3530
         width: 182
         height: 566
       alignment: 0
@@ -736,7 +736,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: de08e3dc081ba6b47bcefbf76387b40e
     internalID: 0
     vertices: []
     indices: 

@@ -83,6 +83,6 @@ public class WeaponDB : MonoBehaviour
     private void Start()
     {
         //Debug.Log(instance.gameObject);
-        DontDestroyOnLoad(this);
+        //DontDestroyOnLoad(this);
     }
 }

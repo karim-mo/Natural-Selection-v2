@@ -2,16 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviourPun
 {
+    public GameObject escapePanel;
+
     private bool cursorOn = false;
+    private PlayerController player;
 
     void Start()
     {
         Screen.SetResolution(PlayerPrefs.GetInt("Width", 1920), PlayerPrefs.GetInt("Height", 1080), FullScreenMode.FullScreenWindow);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
+
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        foreach (GameObject p in players)
+        {
+            //Debug.Log(p);
+            if (p.GetComponent<PlayerController>().isMine())
+            {
+                player = p.GetComponent<PlayerController>();
+                break;
+            }
+        }
     }
 
     
@@ -23,5 +39,41 @@ public class GameManager : MonoBehaviourPun
         }
 
         Cursor.visible = cursorOn;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!Cursor.visible)
+            {
+                Cursor.visible = true;
+                cursorOn = true;
+            }
+            player.canMove = false;
+            escapePanel.SetActive(!escapePanel.activeSelf);
+            if (!escapePanel.activeInHierarchy)
+            {
+                player.canMove = true;
+                cursorOn = false;
+                Cursor.visible = false;
+            }
+        }
+    }
+
+    public void Settings()
+    {
+
+    }
+
+    public void ExitMatch()
+    {
+        PlayerPrefs.SetInt("scene", 0);
+        PlayerPrefs.SetString("LSText", "Connecting to lobby");
+        WeaponDB.instance = null;
+        PlayerHUD.instance = null;
+        SceneManager.LoadScene(1);
+    }
+
+    public void optBack()
+    {
+
     }
 }

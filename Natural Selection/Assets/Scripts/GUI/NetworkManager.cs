@@ -45,6 +45,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void Awake()
     {
+        UnityEngine.Cursor.visible = true;
         PhotonNetwork.AutomaticallySyncScene = true;
         cachedRoomList = new Dictionary<string, RoomInfo>();
         roomListEntries = new Dictionary<string, GameObject>();
@@ -105,7 +106,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public void CreateRoom()
     {
         //AudioManager.Play("Click");
-        RoomOptions options = new RoomOptions { MaxPlayers = 10 };
+        RoomOptions options = new RoomOptions { MaxPlayers = 4 };
 
         PhotonNetwork.CreateRoom(PhotonNetwork.NickName + "'s Room", options, null);
 

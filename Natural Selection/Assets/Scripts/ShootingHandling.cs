@@ -106,12 +106,14 @@ public class ShootingHandling : MonoBehaviourPun
             }
             else if(hit.collider != null && hit.collider.CompareTag("Player"))
             {
-                photonView.RPC("DamagePlayer",
+                //Debug.LogError("My local viewID:" + photonView.ViewID);
+                hit.collider.gameObject.GetComponent<PhotonView>().RPC("DamagePlayer",
                     RpcTarget.Others,
                     hit.collider.gameObject.GetComponent<PhotonView>().ViewID,
                     currWeapon.damage,
                     photonView.ViewID
                     );
+                
                 PhotonNetwork.SendAllOutgoingCommands();
             }
             currWeapon.currBullets--;
@@ -240,16 +242,30 @@ public class ShootingHandling : MonoBehaviourPun
     [PunRPC]
     public void DamagePlayer(int pID, int damage, int killerID)
     {
-        PlayerController player = PhotonView.Find(pID).gameObject.GetComponent<PlayerController>();
+        PlayerController _player = PhotonView.Find(pID).gameObject.GetComponent<PlayerController>();
+        if (!photonView.IsMine) return;
+        if (_player.currHealth <= 0) return;
 
-        if (player.currHealth <= 0) return;
-        //Debug.Log(killerID);       
-
-        player.currHealth -= damage;
-        if(player.currHealth <= 0)
+        _player.currHealth -= damage;
+        if(_player.currHealth <= 0)
         {
-            Debug.LogError("Killed by: " + PhotonView.Find(killerID).Owner.NickName);
+            photonView.RPC("AddToFeed",
+                RpcTarget.All,
+                PhotonView.Find(killerID).Owner.NickName,
+                PhotonView.Find(pID).Owner.NickName,
+                killerID
+                );
+            //Debug.LogError("Killed by: " + PhotonView.Find(killerID).Owner.NickName);
         }
+    }
+
+    [PunRPC]
+    public void AddToFeed(string p1, string p2, int killerID)
+    {
+        PlayerHUD.instance.addToFeed(p1, p2);
+
+        PlayerController _player = PhotonView.Find(killerID).gameObject.GetComponent<PlayerController>();
+        _player.kills++;
     }
 
     [PunRPC]

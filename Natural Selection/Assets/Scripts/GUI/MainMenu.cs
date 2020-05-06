@@ -97,9 +97,10 @@ public class MainMenu : MonoBehaviour
         PlayerPrefs.SetInt("Height", height);
 
         string text = nameInput.GetComponent<TMP_InputField>().text;
-        if (text != "" && text.Length > 15 && text.Length < 5)
+        if (text != "" && text.Length < 15 && text.Length >= 5)
         {
             PlayerPrefs.SetString("NAME", text);
+            PlayerPrefs.Save();
         }
         PlayerPrefs.SetFloat("MOUSE_SENS", Slider.GetComponent<Slider>().value);
         mainPanel.SetActive(true);

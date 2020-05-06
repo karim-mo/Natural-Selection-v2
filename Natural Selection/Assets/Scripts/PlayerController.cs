@@ -72,6 +72,18 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public bool R_reloaded;
     [HideInInspector]
     public bool D_isDead;
+    [HideInInspector]
+    public ShootingHandling weapon;
+    [HideInInspector]
+    public int kills;
+    [HideInInspector]
+    public int deaths;
+    [HideInInspector]
+    public bool canMove;
+    [HideInInspector]
+    public bool isGroundDashing;
+    [HideInInspector]
+    public bool isJumpDashing;
     #endregion
 
 
@@ -86,14 +98,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private float mainCamFOV;
     private float aimFOV;
     private bool _grounded;
-    private bool canMove;
     private bool rifleUp;
     private bool canShoot;
     private bool isGrabbingWep;
     private bool isCrouching;
     private bool m_xDecreased;
-    private bool isGroundDashing;
-    private bool isJumpDashing;
     private bool grabbingWall;
     private bool Aim;
     private bool Dead;
@@ -101,7 +110,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     private Rigidbody _rb;
     private Animator anim;
     private CapsuleCollider col;
-    private ShootingHandling weapon;
     private NetworkController networkedPlayer;
     private StaminaHandling stamina;
     #endregion
@@ -476,6 +484,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public void refInit()
     {
         _rb = GetComponent<Rigidbody>();
+        stamina = GetComponent<StaminaHandling>();
         anim = GetComponent<Animator>();
         camBase = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
         cam = camBase.gameObject.transform.GetChild(0).gameObject.GetComponent<Camera>();
@@ -504,6 +513,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             Dead = true;
             canMove = false;
+            deaths++;
             StartCoroutine("Death");
             return;
         }
@@ -584,9 +594,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, mainCamFOV, Time.deltaTime * 10);
         }
 
-        if (Input.GetKeyDown(KeyCode.F) && !isReloading && !isHolsteringWep && !isGrabbingWep && !isGroundDashing && !isJumpDashing && !grabbingWall)
+        if (Input.GetKeyDown(KeyCode.F) && !isReloading && !isHolsteringWep && !isGrabbingWep && !isGroundDashing && !isJumpDashing && !grabbingWall && stamina.canUseStamina())
         {
             Dash();
+            stamina.m_currStamina -= 30;
+            stamina.stopRecharge();
         }
     }
 
@@ -763,7 +775,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             stream.SendNext(targetPos);
             stream.SendNext(currState);
             stream.SendNext(currHealth);
-
+            stream.SendNext(kills);
+            stream.SendNext(deaths);
             //stream.SendNext(m_isGrabbingWep);
             //stream.SendNext(isHolsteringWep);
             //stream.SendNext(isReloading);
@@ -782,6 +795,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             targetPos = (Vector3)stream.ReceiveNext();
             currState = (int)stream.ReceiveNext();
             currHealth = (float)stream.ReceiveNext();
+            kills = (int)stream.ReceiveNext();
+            deaths = (int)stream.ReceiveNext();
 
             //m_isGrabbingWep = (bool)stream.ReceiveNext();
             //isHolsteringWep = (bool)stream.ReceiveNext();
@@ -801,7 +816,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             //lastTimePacketSent = m_timePacketSent;
             //m_timePacketSent = (float)info.SentServerTime;
             //lastNetworkedPosition = transform.position;
-        }     
-        
+        }
+
     }
 }
