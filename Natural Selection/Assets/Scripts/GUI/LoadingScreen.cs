@@ -33,7 +33,11 @@ public class LoadingScreen : MonoBehaviour
         yield return new WaitForSeconds(1);
         //AsyncOperation Loading = SceneManager.LoadSceneAsync(index);
         //Loading.allowSceneActivation = false;
-        if (PhotonNetwork.IsMasterClient) PhotonNetwork.LoadLevel(index);
+        if (PhotonNetwork.IsMasterClient || PlayerPrefs.GetInt("DisconnectState", 0) == 1)
+        {
+            PlayerPrefs.SetInt("DisconnectState", 0);
+            PhotonNetwork.LoadLevel(index);
+        }
 
 
         while (PhotonNetwork.LevelLoadingProgress <= 1.0f)

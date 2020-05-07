@@ -5,7 +5,7 @@ using Photon.Pun;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviourPun
+public class GameManager : MonoBehaviourPunCallbacks
 {
     public GameObject escapePanel;
     public GameObject escapeSettings;
@@ -75,7 +75,13 @@ public class GameManager : MonoBehaviourPun
         PlayerPrefs.SetString("LSText", "Connecting to lobby");
         WeaponDB.instance = null;
         PlayerHUD.instance = null;
-        SceneManager.LoadScene(1);
+        PlayerPrefs.SetInt("DisconnectState", 1);
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public override void OnLeftRoom()
+    {
+        PhotonNetwork.LoadLevel("LoadingScreen");
     }
 
     public void optBack()

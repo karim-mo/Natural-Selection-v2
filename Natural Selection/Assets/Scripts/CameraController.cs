@@ -53,8 +53,9 @@ public class CameraController : MonoBehaviour
 
 	void CameraUpdater()
 	{
+		if (CameraFollowObj == null) return;
 		Transform target = CameraFollowObj.transform;
-
+		
 		
 
 		float speed = CameraMoveSpeed * Time.deltaTime;
