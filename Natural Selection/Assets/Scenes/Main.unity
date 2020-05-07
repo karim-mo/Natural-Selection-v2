@@ -39,7 +39,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1779983772}
-  m_IndirectSpecularColor: {r: 0.17276844, g: 0.21589246, b: 0.2978263, a: 1}
+  m_IndirectSpecularColor: {r: 0.16003802, g: 0.19977127, b: 0.27869916, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -18129,7 +18129,7 @@ MonoBehaviour:
     reserve: 120
     currBullets: 0
     currReserve: 0
-    damage: 10
+    damage: 20
     fireAmount: 1
     fireRate: 0.1
     animSpeed: 1
@@ -18241,7 +18241,7 @@ MonoBehaviour:
     reserve: 120
     currBullets: 0
     currReserve: 0
-    damage: 10
+    damage: 30
     fireAmount: 1
     fireRate: 0.1
     animSpeed: 1
