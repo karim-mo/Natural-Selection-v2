@@ -813,7 +813,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         anim.SetLayerWeight(1, 0);
         //canMove = false;
         anim.SetInteger("state", 3);
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(7f);
         currHealth = maxHealth;
         weapon.currWeapons[0].currBullets = weapon.currWeapons[0].bullets;
         weapon.currWeapons[0].currReserve = weapon.currWeapons[0].reserve;

@@ -346,7 +346,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: -Resolution
+  m_text: Resolution
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -416,7 +416,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: -9.949083, w: 0}
   m_textInfo:
     textComponent: {fileID: 36940247}
-    characterCount: 11
+    characterCount: 10
     spriteCount: 0
     spaceCount: 0
     wordCount: 1
@@ -1023,7 +1023,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Natural - Selection
+  m_text: Natural  Selection
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e5578ab703b9e7f4b8058f0ac84d5d05, type: 2}
   m_sharedMaterial: {fileID: 4847782321091684296, guid: e5578ab703b9e7f4b8058f0ac84d5d05,
@@ -1094,10 +1094,10 @@ MonoBehaviour:
   m_margin: {x: -346.45642, y: 0, z: -310.92245, w: -45.686573}
   m_textInfo:
     textComponent: {fileID: 302596580}
-    characterCount: 19
+    characterCount: 18
     spriteCount: 0
     spaceCount: 2
-    wordCount: 3
+    wordCount: 2
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -4480,7 +4480,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: -Mouse sensitivity
+  m_text: Mouse sensitivity
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4550,7 +4550,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: -109.439316, w: 0}
   m_textInfo:
     textComponent: {fileID: 1097581887}
-    characterCount: 18
+    characterCount: 17
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
@@ -6647,9 +6647,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '-Change Name
-
-'
+  m_text: Change Name
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6719,9 +6717,9 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: -109.439316, w: 0}
   m_textInfo:
     textComponent: {fileID: 1406374865}
-    characterCount: 13
+    characterCount: 11
     spriteCount: 0
-    spaceCount: 2
+    spaceCount: 1
     wordCount: 2
     linkCount: 0
     lineCount: 1
