@@ -9,6 +9,7 @@ public class CameraController : MonoBehaviour
 	public GameObject CameraFollowObj;
 	public float clampAngle = 80.0f;
 	public float inputSensitivity = 150.0f;
+	public float currSens;
 	public float mouseX;
 	public float mouseY;
 	public Vector3 offset;
@@ -18,31 +19,31 @@ public class CameraController : MonoBehaviour
 
 
 
-	// Use this for initialization
+
 	void Start()
 	{
 		Vector3 rot = transform.localRotation.eulerAngles;
 		Yaw = rot.y;
 		Pitch = rot.x;
+		currSens = inputSensitivity;
 	}
 
-	// Update is called once per frame
 	void Update()
 	{
 
-		// We setup the rotation of the sticks here
 		mouseX = Input.GetAxis("Mouse X");
 		mouseY = Input.GetAxis("Mouse Y");
+		currSens = PlayerPrefs.GetFloat("MOUSE_SENS", 1) * inputSensitivity;
 
-		Yaw += mouseX * inputSensitivity * Time.deltaTime;
-		Pitch -= mouseY * inputSensitivity * Time.deltaTime;
+		Yaw += mouseX * currSens * Time.fixedDeltaTime;
+		Pitch -= mouseY * currSens * Time.fixedDeltaTime;
 
 		Pitch = Mathf.Clamp(Pitch, -clampAngle, clampAngle);
 
 		Quaternion localRotation = Quaternion.Euler(Pitch, Yaw, 0.0f);
 		transform.rotation = localRotation;
 
-
+		
 	}
 
 	void LateUpdate()
@@ -52,10 +53,11 @@ public class CameraController : MonoBehaviour
 
 	void CameraUpdater()
 	{
-		// set the target object to follow
+		if (CameraFollowObj == null) return;
 		Transform target = CameraFollowObj.transform;
+		
+		
 
-		//move towards the game object that is the target
 		float speed = CameraMoveSpeed * Time.deltaTime;
 		transform.position = Vector3.MoveTowards(transform.position, target.position, speed);
 	}
