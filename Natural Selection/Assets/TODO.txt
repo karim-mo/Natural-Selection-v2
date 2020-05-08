@@ -1,0 +1,2 @@
+[BUG] - Animations not following rotations due to shooting if conditions
+[OPTIMISE] - Object pooling for bullet holes
