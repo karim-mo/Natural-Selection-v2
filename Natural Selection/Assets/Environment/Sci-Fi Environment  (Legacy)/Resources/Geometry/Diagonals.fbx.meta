@@ -1,175 +1,66 @@
 fileFormatVersion: 2
 guid: 5f4071a19fa2447469ec58482827572c
+timeCreated: 1493812781
+licenseType: Store
 ModelImporter:
-  serializedVersion: 26
-  internalIDToNameTable:
-  - first:
-      1: 100000
-    second: Cube.012
-  - first:
-      1: 100002
-    second: Cube.016
-  - first:
-      1: 100004
-    second: Cube.017
-  - first:
-      1: 100006
-    second: Cube.018
-  - first:
-      1: 100008
-    second: Cube.036
-  - first:
-      1: 100010
-    second: //RootNode
-  - first:
-      1: 100012
-    second: Diagonal_Plate_01
-  - first:
-      1: 100014
-    second: Diagonal_Platform_01
-  - first:
-      1: 100016
-    second: Diagonal_Platform_02
-  - first:
-      1: 100018
-    second: Diagonal_Wall_01
-  - first:
-      1: 100020
-    second: Diagonal_Wall_02
-  - first:
-      4: 400000
-    second: Cube.012
-  - first:
-      4: 400002
-    second: Cube.016
-  - first:
-      4: 400004
-    second: Cube.017
-  - first:
-      4: 400006
-    second: Cube.018
-  - first:
-      4: 400008
-    second: Cube.036
-  - first:
-      4: 400010
-    second: //RootNode
-  - first:
-      4: 400012
-    second: Diagonal_Plate_01
-  - first:
-      4: 400014
-    second: Diagonal_Platform_01
-  - first:
-      4: 400016
-    second: Diagonal_Platform_02
-  - first:
-      4: 400018
-    second: Diagonal_Wall_01
-  - first:
-      4: 400020
-    second: Diagonal_Wall_02
-  - first:
-      23: 2300000
-    second: Cube.012
-  - first:
-      23: 2300002
-    second: Cube.016
-  - first:
-      23: 2300004
-    second: Cube.017
-  - first:
-      23: 2300006
-    second: Cube.018
-  - first:
-      23: 2300008
-    second: Cube.036
-  - first:
-      23: 2300010
-    second: Diagonal_Plate_01
-  - first:
-      23: 2300012
-    second: Diagonal_Platform_01
-  - first:
-      23: 2300014
-    second: Diagonal_Platform_02
-  - first:
-      23: 2300016
-    second: Diagonal_Wall_01
-  - first:
-      23: 2300018
-    second: Diagonal_Wall_02
-  - first:
-      33: 3300000
-    second: Cube.012
-  - first:
-      33: 3300002
-    second: Cube.016
-  - first:
-      33: 3300004
-    second: Cube.017
-  - first:
-      33: 3300006
-    second: Cube.018
-  - first:
-      33: 3300008
-    second: Cube.036
-  - first:
-      33: 3300010
-    second: Diagonal_Plate_01
-  - first:
-      33: 3300012
-    second: Diagonal_Platform_01
-  - first:
-      33: 3300014
-    second: Diagonal_Platform_02
-  - first:
-      33: 3300016
-    second: Diagonal_Wall_01
-  - first:
-      33: 3300018
-    second: Diagonal_Wall_02
-  - first:
-      43: 4300000
-    second: Cube.012
-  - first:
-      43: 4300002
-    second: Cube.036
-  - first:
-      43: 4300004
-    second: Cube.018
-  - first:
-      43: 4300006
-    second: Cube.016
-  - first:
-      43: 4300008
-    second: Cube.017
-  - first:
-      43: 4300010
-    second: Diagonal_Plate_01
-  - first:
-      43: 4300012
-    second: Diagonal_Wall_01
-  - first:
-      43: 4300014
-    second: Diagonal_Platform_01
-  - first:
-      43: 4300016
-    second: Diagonal_Platform_02
-  - first:
-      43: 4300018
-    second: Diagonal_Wall_02
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Diagonals
-    second: {fileID: 2100000, guid: 61c1230a2916b4e408a8a31f5b9e4606, type: 2}
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Cube.012
+    100002: Cube.016
+    100004: Cube.017
+    100006: Cube.018
+    100008: Cube.036
+    100010: //RootNode
+    100012: Diagonal_Plate_01
+    100014: Diagonal_Platform_01
+    100016: Diagonal_Platform_02
+    100018: Diagonal_Wall_01
+    100020: Diagonal_Wall_02
+    400000: Cube.012
+    400002: Cube.016
+    400004: Cube.017
+    400006: Cube.018
+    400008: Cube.036
+    400010: //RootNode
+    400012: Diagonal_Plate_01
+    400014: Diagonal_Platform_01
+    400016: Diagonal_Platform_02
+    400018: Diagonal_Wall_01
+    400020: Diagonal_Wall_02
+    2300000: Cube.012
+    2300002: Cube.016
+    2300004: Cube.017
+    2300006: Cube.018
+    2300008: Cube.036
+    2300010: Diagonal_Plate_01
+    2300012: Diagonal_Platform_01
+    2300014: Diagonal_Platform_02
+    2300016: Diagonal_Wall_01
+    2300018: Diagonal_Wall_02
+    3300000: Cube.012
+    3300002: Cube.016
+    3300004: Cube.017
+    3300006: Cube.018
+    3300008: Cube.036
+    3300010: Diagonal_Plate_01
+    3300012: Diagonal_Platform_01
+    3300014: Diagonal_Platform_02
+    3300016: Diagonal_Wall_01
+    3300018: Diagonal_Wall_02
+    4300000: Cube.012
+    4300002: Cube.036
+    4300004: Cube.018
+    4300006: Cube.016
+    4300008: Cube.017
+    4300010: Diagonal_Plate_01
+    4300012: Diagonal_Wall_01
+    4300014: Diagonal_Platform_01
+    4300016: Diagonal_Platform_02
+    4300018: Diagonal_Wall_02
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
-    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -182,15 +73,12 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    importAnimatedCustomProperties: 0
-    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    extraUserProperties: []
     clipAnimations: []
     isReadable: 1
   meshes:
@@ -198,23 +86,13 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
-    useSRGBMaterialColor: 1
-    sortHierarchyByName: 1
-    importVisibility: 0
     importBlendShapes: 1
-    importCameras: 0
-    importLights: 0
     swapUVChannels: 0
-    generateSecondaryUV: 1
+    generateSecondaryUV: 0
     useFileUnits: 1
+    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
-    preserveHierarchy: 0
-    skinWeightsMode: 0
-    maxBonesPerVertex: 4
-    minBoneWeight: 0.001
-    meshOptimizationFlags: -1
-    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -224,15 +102,10 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
-    normalCalculationMode: 0
-    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
-    blendShapeNormalImportMode: 1
-    normalSmoothingSource: 0
-  referencedClips: []
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
-    serializedVersion: 3
+    serializedVersion: 2
     human: []
     skeleton: []
     armTwist: 0.5
@@ -242,8 +115,8 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
     rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1

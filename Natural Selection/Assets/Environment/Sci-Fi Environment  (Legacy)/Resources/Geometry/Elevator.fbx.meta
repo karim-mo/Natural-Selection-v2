@@ -1,85 +1,36 @@
 fileFormatVersion: 2
 guid: 75884c4c7d58e4a65ac8edc2d1b5c666
+timeCreated: 1494064132
+licenseType: Store
 ModelImporter:
-  serializedVersion: 26
-  internalIDToNameTable:
-  - first:
-      1: 100000
-    second: //RootNode
-  - first:
-      1: 100002
-    second: Elevator_Base
-  - first:
-      1: 100004
-    second: Elevator_Finish
-  - first:
-      1: 100006
-    second: Elevator_Platform
-  - first:
-      1: 100008
-    second: Elevator_Rail
-  - first:
-      4: 400000
-    second: //RootNode
-  - first:
-      4: 400002
-    second: Elevator_Base
-  - first:
-      4: 400004
-    second: Elevator_Finish
-  - first:
-      4: 400006
-    second: Elevator_Platform
-  - first:
-      4: 400008
-    second: Elevator_Rail
-  - first:
-      23: 2300000
-    second: Elevator_Base
-  - first:
-      23: 2300002
-    second: Elevator_Finish
-  - first:
-      23: 2300004
-    second: Elevator_Platform
-  - first:
-      23: 2300006
-    second: Elevator_Rail
-  - first:
-      33: 3300000
-    second: Elevator_Base
-  - first:
-      33: 3300002
-    second: Elevator_Finish
-  - first:
-      33: 3300004
-    second: Elevator_Platform
-  - first:
-      33: 3300006
-    second: Elevator_Rail
-  - first:
-      43: 4300000
-    second: Elevator_Platform
-  - first:
-      43: 4300002
-    second: Elevator_Rail
-  - first:
-      43: 4300004
-    second: Elevator_Finish
-  - first:
-      43: 4300006
-    second: Elevator_Base
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Elevator
-    second: {fileID: 2100000, guid: fa2c72ee7f35b4b6abd3d30bdf104f6a, type: 2}
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Elevator_Base
+    100004: Elevator_Finish
+    100006: Elevator_Platform
+    100008: Elevator_Rail
+    400000: //RootNode
+    400002: Elevator_Base
+    400004: Elevator_Finish
+    400006: Elevator_Platform
+    400008: Elevator_Rail
+    2300000: Elevator_Base
+    2300002: Elevator_Finish
+    2300004: Elevator_Platform
+    2300006: Elevator_Rail
+    3300000: Elevator_Base
+    3300002: Elevator_Finish
+    3300004: Elevator_Platform
+    3300006: Elevator_Rail
+    4300000: Elevator_Platform
+    4300002: Elevator_Rail
+    4300004: Elevator_Finish
+    4300006: Elevator_Base
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
-    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -92,15 +43,12 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    importAnimatedCustomProperties: 0
-    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    extraUserProperties: []
     clipAnimations: []
     isReadable: 1
   meshes:
@@ -108,23 +56,13 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
-    useSRGBMaterialColor: 1
-    sortHierarchyByName: 1
-    importVisibility: 0
     importBlendShapes: 1
-    importCameras: 0
-    importLights: 0
     swapUVChannels: 0
-    generateSecondaryUV: 1
+    generateSecondaryUV: 0
     useFileUnits: 1
+    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
-    preserveHierarchy: 0
-    skinWeightsMode: 0
-    maxBonesPerVertex: 4
-    minBoneWeight: 0.001
-    meshOptimizationFlags: -1
-    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -134,15 +72,10 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
-    normalCalculationMode: 0
-    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
-    blendShapeNormalImportMode: 1
-    normalSmoothingSource: 0
-  referencedClips: []
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
-    serializedVersion: 3
+    serializedVersion: 2
     human: []
     skeleton: []
     armTwist: 0.5
@@ -152,8 +85,8 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
     rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
