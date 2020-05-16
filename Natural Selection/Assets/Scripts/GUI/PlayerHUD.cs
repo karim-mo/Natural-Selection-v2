@@ -61,7 +61,7 @@ public class PlayerHUD : MonoBehaviourPunCallbacks
             //Debug.Log("Yes");
             currTime = (float)PhotonNetwork.Time;
             Hashtable timerProp = new Hashtable() { { "GameTimer", currTime } };
-            PhotonNetwork.CurrentRoom.SetCustomProperties(timerProp);
+            if(!PhotonNetwork.OfflineMode) PhotonNetwork.CurrentRoom.SetCustomProperties(timerProp);
         }
         else
         {

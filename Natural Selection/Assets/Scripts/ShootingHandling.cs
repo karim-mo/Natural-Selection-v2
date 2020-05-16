@@ -40,7 +40,7 @@ public class ShootingHandling : MonoBehaviourPun
 
     void Start()
     {
-        if (!photonView.IsMine) return;
+        if (!photonView.IsMine && PhotonNetwork.IsConnected) return;
 
         player = GetComponent<PlayerController>();
         anim = GetComponent<Animator>();
@@ -53,7 +53,11 @@ public class ShootingHandling : MonoBehaviourPun
         currWeapons[1].currBullets = currWeapons[1].bullets;
         currWeapons[1].currReserve = currWeapons[1].reserve;
         currWeapon = currWeapons[0];
-        currWeapon.go = PhotonNetwork.Instantiate(currWeapon.prefab.name, currWeapon.prefab.transform.position, currWeapon.prefab.transform.rotation);
+        if (!PhotonNetwork.OfflineMode)
+            currWeapon.go = PhotonNetwork.Instantiate(currWeapon.prefab.name, currWeapon.prefab.transform.position, currWeapon.prefab.transform.rotation);
+        else
+            currWeapon.go = Instantiate(currWeapon.prefab, currWeapon.prefab.transform.position, currWeapon.prefab.transform.rotation);
+
         Detach(currWeapon.go, currWeapon);
         currWeapon = null;
     }

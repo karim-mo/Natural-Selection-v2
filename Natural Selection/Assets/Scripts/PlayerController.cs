@@ -644,22 +644,50 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
                 weapon.prevWeapon = weapon.currWeapons[0];
                 return;
             }
-            if (weapon.currWeapon.go == null) weapon.currWeapon.go = 
-                    PhotonNetwork.Instantiate(weapon.currWeapon.prefab.name, 
-                    weapon.currWeapon.prefab.transform.position, 
-                    weapon.currWeapon.prefab.transform.rotation
-                    );
+            if (weapon.currWeapon.go == null)
+            {
+                if (!PhotonNetwork.OfflineMode)
+                {
+                    weapon.currWeapon.go =
+                        PhotonNetwork.Instantiate(weapon.currWeapon.prefab.name,
+                        weapon.currWeapon.prefab.transform.position,
+                        weapon.currWeapon.prefab.transform.rotation
+                        );
+                }
+                else
+                {
+                    weapon.currWeapon.go =
+                        Instantiate(weapon.currWeapon.prefab,
+                        weapon.currWeapon.prefab.transform.position,
+                        weapon.currWeapon.prefab.transform.rotation
+                        );
+                }
+            }
             StartCoroutine("GrabWeapon");
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2) && currState == States.WEAPON_DOWN && !isReloading && !isHolsteringWep && !isGrabbingWep)
         {
             weapon.currWeapon = weapon.currWeapons[1];
-            if (weapon.currWeapon.go == null) weapon.currWeapon.go =
-                    PhotonNetwork.Instantiate(weapon.currWeapon.prefab.name,
-                    weapon.currWeapon.prefab.transform.position,
-                    weapon.currWeapon.prefab.transform.rotation
-                    );
+            if (weapon.currWeapon.go == null)
+            {
+                if (!PhotonNetwork.OfflineMode)
+                {
+                    weapon.currWeapon.go =
+                        PhotonNetwork.Instantiate(weapon.currWeapon.prefab.name,
+                        weapon.currWeapon.prefab.transform.position,
+                        weapon.currWeapon.prefab.transform.rotation
+                        );
+                }
+                else
+                {
+                    weapon.currWeapon.go =
+                        Instantiate(weapon.currWeapon.prefab,
+                        weapon.currWeapon.prefab.transform.position,
+                        weapon.currWeapon.prefab.transform.rotation
+                        );
+                }
+            }
             StartCoroutine("GrabWeapon");
         }
 

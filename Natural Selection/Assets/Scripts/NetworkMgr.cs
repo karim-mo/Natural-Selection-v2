@@ -13,9 +13,9 @@ public class NetworkMgr : MonoBehaviour
 
     private void Awake()
     {
+        PhotonNetwork.OfflineMode = true;
         PhotonNetwork.SendRate = 20;
         PhotonNetwork.SerializationRate = 20;
-        //PhotonNetwork.OfflineMode = true;
         PhotonNetwork.AutomaticallySyncScene = true;
         if (!PhotonNetwork.OfflineMode)
         {
