@@ -15,9 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Main.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/Museum.unity
-    guid: a4bad29e15ed1e14cbc12d73fb8a52f8
-  - enabled: 1
     path: Assets/Scenes/Map 1.unity
     guid: d0d24552061fb4c48afc4244d0f4714c
+  - enabled: 1
+    path: Assets/Scenes/Museum.unity
+    guid: a4bad29e15ed1e14cbc12d73fb8a52f8
   m_configObjects: {}
